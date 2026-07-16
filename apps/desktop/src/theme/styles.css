@@ -46,10 +46,10 @@ body {
   -webkit-backdrop-filter: blur(30px) saturate(1.5);
   backdrop-filter: blur(30px) saturate(1.5);
   border: none;
-  border-bottom: 1px solid var(--chrome-border);
-  /* Height matches the macOS titlebar band so items line up with the traffic
-     lights, which are vertically centered in the same 44px strip. */
+  /* Flush to the window top so it hosts the traffic lights; the content islands
+     float below it with a vibrancy gap. Height matches the titlebar band. */
   height: 46px;
+  z-index: 5;
 }
 
 /* Reserve room for the macOS traffic lights (overlay titlebar). */
@@ -149,10 +149,14 @@ select:focus-visible,
   color: var(--accent-on);
 }
 
-/* ── Content split ───────────────────────────────────────────────────────── */
+/* ── Content: floating "islands" over the window material ────────────────────
+   Each panel is a rounded, bordered card; the gaps between them (and above,
+   below the toolbar) reveal the vibrancy for a layered, depth-y look. */
 .content {
   display: grid;
   grid-template-columns: minmax(340px, 1fr) minmax(380px, 1.4fr);
+  gap: 12px;
+  padding: 12px;
   min-height: 0;
 }
 .content.help-open {
@@ -163,16 +167,17 @@ select:focus-visible,
   overflow: hidden;
   min-height: 0;
   position: relative;
-  border: none;
+  border-radius: var(--radius);
+  border: 1px solid var(--island-edge);
+  box-shadow: var(--island-shadow);
 }
-/* Editor is vibrant (frosted over the window material) — opaque on Linux. */
+/* Editor island — the most translucent layer (frosted over the material). */
 .panel.editor {
   background: var(--editor-veil);
 }
-/* Preview stays an opaque "paper" surface, divided from the editor by a hairline. */
+/* Preview island — a near-opaque "paper" surface so the canvas stays crisp. */
 .panel.preview {
   background: var(--canvas-paper);
-  border-left: 1px solid var(--chrome-border);
 }
 
 .panel-label {
@@ -261,8 +266,9 @@ select:focus-visible,
   background: var(--help-veil);
   -webkit-backdrop-filter: blur(30px) saturate(1.5);
   backdrop-filter: blur(30px) saturate(1.5);
-  border: none;
-  border-left: 1px solid var(--chrome-border);
+  border: 1px solid var(--island-edge);
+  border-radius: var(--radius);
+  box-shadow: var(--island-shadow);
   padding: 16px 18px;
   overflow: auto;
   user-select: text;

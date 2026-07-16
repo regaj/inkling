@@ -74,10 +74,9 @@ pub fn run() {
                 {
                     use tauri_plugin_decorum::WebviewWindowExt;
                     // decorum centers the buttons at (y + button_height)/2 + 4 from
-                    // the window top. Our 46px toolbar (border-box, 1px bottom
-                    // border) centers its content at 22.5px, so y = 23 lines the
-                    // traffic lights up exactly with the brand and buttons.
-                    let _ = window.set_traffic_lights_inset(16.0, 23.0);
+                    // the window top. Tuned so the lights sit on the optical
+                    // centerline of the 46px toolbar's brand + buttons.
+                    let _ = window.set_traffic_lights_inset(16.0, 28.0);
                 }
             }
             Ok(())

@@ -18,6 +18,9 @@
   --help-veil: rgba(249, 247, 255, 0.58); /* help — faint cool tint */
   --editor-gutter: transparent;
   --canvas-paper: #f7f3ea;
+  /* Floating-island edge + drop shadow (depth over the window material). */
+  --island-edge: rgba(0, 0, 0, 0.09);
+  --island-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
   --text-hi: #22222a;
   --text-muted: #6b6b78;
   --accent: #0e7c86;
@@ -58,6 +61,8 @@
   --help-veil: rgba(30, 26, 40, 0.5); /* help — faint cool tint */
   --editor-gutter: transparent;
   --canvas-paper: #1c1b19;
+  --island-edge: rgba(255, 255, 255, 0.1);
+  --island-shadow: 0 8px 26px rgba(0, 0, 0, 0.42);
   --text-hi: #eceaf2;
   --text-muted: #8a8798;
   --accent: #3fb6c4;
