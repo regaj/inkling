@@ -1,0 +1,75 @@
+/*
+ * Inkling design tokens — the single source of truth for color and type.
+ * Two worlds in one window: a precise monospace "ink" editor beside a warm
+ * hand-drawn "paper" canvas, seen through frosted window chrome. Accent = a
+ * single fountain-pen peacock ink.
+ */
+
+:root {
+  /* Light theme */
+  --bg: #ededf0;
+  --chrome: rgba(255, 255, 255, 0.6);
+  --chrome-solid: #f4f4f7; /* opaque fallback (Linux / no effects) */
+  --chrome-border: rgba(0, 0, 0, 0.08);
+  --editor-bg: #fbfbfd;
+  --editor-gutter: #f1f1f5;
+  --canvas-paper: #f7f3ea;
+  --text-hi: #22222a;
+  --text-muted: #6b6b78;
+  --accent: #0e7c86;
+  --accent-hover: #0a626b;
+  --accent-on: #ffffff;
+  --weak: #b9852b;
+  --ok: #2e8b57;
+  --err: #c0392b;
+
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  --radius: 10px;
+  --radius-sm: 7px;
+
+  /* Type */
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-ui: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --fs-0: 0.6875rem;
+  --fs-1: 0.75rem;
+  --fs-2: 0.8125rem;
+  --fs-3: 0.875rem;
+  --fs-4: 1rem;
+  --fs-5: 1.25rem;
+  --fs-6: 1.75rem;
+  --fs-7: 2.5rem;
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #14141b;
+  --chrome: rgba(20, 20, 27, 0.55);
+  --chrome-solid: #1a1a22;
+  --chrome-border: rgba(255, 255, 255, 0.08);
+  --editor-bg: #191922;
+  --editor-gutter: #20202b;
+  --canvas-paper: #1c1b19;
+  --text-hi: #eceaf2;
+  --text-muted: #8a8798;
+  --accent: #3fb6c4;
+  --accent-hover: #1e8a97;
+  --accent-on: #08222a;
+  --weak: #d9a441;
+  --ok: #7bd88f;
+  --err: #f58a8a;
+
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
+
+/*
+ * Opaque fallback: when the platform has no translucency (Linux, or unsupported
+ * Windows builds), the frontend adds `.no-window-effects` to <html>, and chrome
+ * surfaces composite as solids so the app still looks intentional.
+ */
+:root.no-window-effects {
+  --chrome: var(--chrome-solid);
+}

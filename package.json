@@ -1,0 +1,36 @@
+{
+  "name": "inkling-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Inkling — a code-to-diagram editor that compiles a small text DSL into real Excalidraw ER diagrams, in five notations.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@11.13.1",
+  "scripts": {
+    "build": "pnpm -r --filter \"./packages/*\" build && pnpm --filter @inkling/desktop build",
+    "build:core": "pnpm --filter @inkling/core build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "pnpm -r test",
+    "test:core": "pnpm --filter @inkling/core test",
+    "dev": "pnpm --filter @inkling/desktop dev",
+    "tauri": "pnpm --filter @inkling/desktop tauri",
+    "cli": "pnpm --filter @inkling/cli start"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/node": "^22.9.0",
+    "eslint": "^9.15.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.14.0",
+    "vitest": "^2.1.5"
+  }
+}

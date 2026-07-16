@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions & discussion
+    url: https://github.com/regaj/inkling/discussions
+    about: Ask questions, share diagrams, and discuss ideas here instead of opening an issue.
+  - name: DSL reference
+    url: https://github.com/regaj/inkling/blob/main/docs/DSL.md
+    about: Check the language reference before filing — your question may already be answered.

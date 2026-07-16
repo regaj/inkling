@@ -1,0 +1,103 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Inkling — .gitignore
+# Nothing enters the repo that isn't required to build, run, understand, or
+# contribute. No secrets, no generated artifacts, no local machine config.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Node / package managers
+node_modules/
+.pnpm-store/
+.pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+dist/
+build/
+out/
+.vite/
+.turbo/
+*.tsbuildinfo
+coverage/
+.nyc_output/
+
+# Rust / Tauri
+target/
+**/target/
+apps/desktop/src-tauri/target/
+.cargo/
+**/*.rs.bk
+# Tauri build-generated ACL/capability schemas
+apps/desktop/src-tauri/gen/schemas/
+
+# Playwright / test artifacts
+.playwright/
+playwright-report/
+test-results/
+blob-report/
+.cache/
+
+# Secrets & environment — NEVER commit
+.env
+.env.*
+!.env.example
+*.local
+*.key
+*.pem
+*.p12
+*.pfx
+*.keychain
+*.keychain-db
+*.mobileprovision
+*.cer
+*.certSigningRequest
+# Apple notarization / signing
+*.p8
+AuthKey_*.p8
+# Windows code signing
+*.spc
+*.pvk
+# Tauri updater / signing private keys
+*.tauri-key
+tauri-private.key
+~/.tauri/
+
+# Build outputs / installers / bundles
+*.app
+*.dmg
+*.msi
+*.exe
+*.nsis
+*.deb
+*.rpm
+*.AppImage
+*.snap
+*.pkg
+*.zip
+*.tar.gz
+
+# OS cruft
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+*~
+
+# Editor / IDE
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+
+# Logs & temp
+*.log
+logs/
+tmp/
+.tmp/

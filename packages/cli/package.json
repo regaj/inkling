@@ -1,0 +1,37 @@
+{
+  "name": "@inkling/cli",
+  "version": "0.1.0",
+  "description": "Inkling CLI — headless .ink exporter. Reuses @inkling/core and renders Excalidraw diagrams in headless Chromium (Playwright).",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "inkling": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "renderer/index.html",
+    "renderer/dist"
+  ],
+  "scripts": {
+    "build": "pnpm run build:renderer && tsc -p tsconfig.json",
+    "build:renderer": "node renderer/build.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "start": "node dist/index.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@excalidraw/excalidraw": "^0.18.0",
+    "@inkling/core": "workspace:*",
+    "pdfkit": "^0.15.0",
+    "playwright": "^1.48.0",
+    "svg-to-pdfkit": "^0.1.8"
+  },
+  "devDependencies": {
+    "@types/pdfkit": "^0.13.5",
+    "@types/svg-to-pdfkit": "^0.1.4",
+    "esbuild": "^0.24.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vitest": "^2.1.5"
+  }
+}

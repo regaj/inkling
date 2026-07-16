@@ -1,0 +1,14 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Core, dialog, OS-info, and window-state permissions for the main window. File IO uses app-defined commands (read_text_file / write_text_file / write_binary_file), which need no plugin scope.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-set-title",
+    "dialog:default",
+    "os:default",
+    "window-state:default"
+  ]
+}
