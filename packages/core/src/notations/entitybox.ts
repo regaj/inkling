@@ -88,7 +88,6 @@ export function emitEntityBox(
     ),
   );
 
-  const keyCount = rows.filter((a) => a.key || a.partial).length;
   const cx = box.x + box.w / 2;
   rows.forEach((a, idx) => {
     const ry = box.y + SIZE.headerH + idx * SIZE.rowH;
@@ -108,7 +107,9 @@ export function emitEntityBox(
       }),
     );
     if (a.key || a.partial) {
-      const uy = ry + SIZE.rowH / 2 + SIZE.fontRow * 0.42;
+      // Sit clearly below the (vertically-centered) text — no divider rule to
+      // crowd it; the underline alone marks the key.
+      const uy = ry + SIZE.rowH / 2 + SIZE.fontRow * 0.62;
       nodes.push(
         lineNode(
           `krule:${e.id}:${a.id}`,
@@ -117,19 +118,6 @@ export function emitEntityBox(
             [cx + tw / 2, uy],
           ],
           { stroke: palette.stroke, strokeStyle: a.partial ? 'dashed' : 'solid' },
-        ),
-      );
-    }
-    if (keyCount > 0 && idx === keyCount - 1 && keyCount < rows.length) {
-      const sy = ry + SIZE.rowH - 2;
-      nodes.push(
-        lineNode(
-          `sect:${e.id}`,
-          [
-            [box.x, sy],
-            [box.x + box.w, sy],
-          ],
-          { stroke, strokeStyle: 'dotted', role: 'compartment-rule' },
         ),
       );
     }
