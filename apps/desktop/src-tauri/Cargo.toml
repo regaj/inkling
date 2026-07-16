@@ -17,6 +17,7 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 tauri = { version = "2", features = ["macos-private-api"] }
+tauri-plugin-decorum = "1"
 tauri-plugin-dialog = "2"
 tauri-plugin-os = "2"
 tauri-plugin-window-state = "2"

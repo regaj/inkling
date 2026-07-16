@@ -217,6 +217,30 @@ isa audit [passed, failed] disjoint total
 
 ---
 
+## Arrows & connectors
+
+Connect any two declared ids — primitive shapes *or* entities. The operator picks
+the style:
+
+| Operator | Draws |
+| --- | --- |
+| `->` | single-line arrow |
+| `=>` | **double-line** arrow (two parallel strokes + arrowhead) |
+| `--` | single line |
+| `==` | **double line** |
+
+```ink
+arrow a -> b "label"       # single arrow, labelled
+arrow a => b               # double-line arrow
+line  a == b               # double line
+arrow engineer => site     # endpoints may be entity ids too
+arrow a -> b dashed        # dashed
+```
+
+Connectors attach to shape borders automatically and render in every notation.
+
+---
+
 ## Primitive (escape-hatch) statements
 
 Primitives are free-form and notation-independent — they render exactly as written, regardless of the active notation. Use them for annotations, legends, or diagrams the ER model doesn't cover.

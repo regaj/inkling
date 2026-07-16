@@ -46,6 +46,22 @@ describe('compile', () => {
     expect(entity?.fill).toBe(DARK_PALETTE.entityFill);
   });
 
+  it('draws => as a double-line arrow and -> as a single arrow', () => {
+    const r = compile('rect a "A"\nrect b "B"\narrow a => b\narrow a -> b', { notation: 'chen' });
+    const conns = r.scene.edges.filter((e) => e.id.startsWith('conn:'));
+    expect(conns).toHaveLength(2);
+    expect(conns[0].double).toBe(true); // =>
+    expect(conns[0].endCap).toBe('arrow');
+    expect(conns[1].double).toBeFalsy(); // ->
+    expect(conns[1].endCap).toBe('arrow');
+    // `line a == b` is a double line with no arrowhead.
+    const line = compile('rect a "A"\nrect b "B"\nline a == b', { notation: 'chen' }).scene.edges.find(
+      (e) => e.id.startsWith('conn:'),
+    );
+    expect(line?.double).toBe(true);
+    expect(line?.endCap).toBe('none');
+  });
+
   it('supports total (double line) and arrow on rel and link in Chen', () => {
     const binary = compile('entity a "A"\nentity b "B"\nrel r "R" a 1-N b total arrow', {
       notation: 'chen',

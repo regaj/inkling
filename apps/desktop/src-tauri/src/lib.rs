@@ -61,10 +61,20 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_os::init())
+        .plugin(tauri_plugin_decorum::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .setup(|app| {
             if let Some(window) = app.get_webview_window("main") {
                 apply_window_effects(&window);
+                // Inset the macOS traffic lights so they sit centered in our
+                // custom toolbar (VSCode-style overlay). Runs after vibrancy,
+                // which otherwise resets the native button layout. decorum keeps
+                // them positioned across resize / fullscreen toggles.
+                #[cfg(target_os = "macos")]
+                {
+                    use tauri_plugin_decorum::WebviewWindowExt;
+                    let _ = window.set_traffic_lights_inset(16.0, 16.0);
+                }
             }
             Ok(())
         })

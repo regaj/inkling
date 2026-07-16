@@ -349,16 +349,22 @@ function parseConnector(
   diags: Diagnostic[],
   kind: 'arrow' | 'line',
 ): void {
-  // <from> <op> <to> ["label"] [flags]
+  // <from> <op> <to> ["label"] [flags].
+  // op: -> single arrow, => double-line arrow, -- single line, == double line.
   const fromTok = tokens[1];
   const opTok = tokens[2];
   const toTok = tokens[3];
   if (!fromTok || !opTok || opTok.kind !== 'op' || !toTok) {
-    return missing(diags, `${kind} <a> ${kind === 'arrow' ? '->' : '--'} <b> ["label"]`, tokens[0]);
+    return missing(
+      diags,
+      `${kind} <a> ${kind === 'arrow' ? '-> | =>' : '-- | =='} <b> ["label"]`,
+      tokens[0],
+    );
   }
   const rest = tokens.slice(4);
   const labelTok = rest.find((t) => t.kind === 'string');
   const flags = flagSet(rest.filter((t) => t.kind !== 'string'));
+  const doubled = opTok.value === '=>' || opTok.value === '==' || flags.has('double');
   ast.push({
     type: 'connector',
     kind,
@@ -366,7 +372,7 @@ function parseConnector(
     to: toTok.value,
     label: labelTok?.value,
     dashed: flags.has('dashed'),
-    double: flags.has('double'),
+    double: doubled,
     pos: tokens[0].pos,
   });
 }

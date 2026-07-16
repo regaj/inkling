@@ -258,7 +258,7 @@ select:focus-visible,
 
 /* ── Help panel ──────────────────────────────────────────────────────────── */
 .help {
-  background: var(--chrome);
+  background: var(--help-veil);
   -webkit-backdrop-filter: blur(30px) saturate(1.5);
   backdrop-filter: blur(30px) saturate(1.5);
   border: none;

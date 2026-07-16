@@ -111,12 +111,15 @@ arrow b -> d "no"`}</pre>
       </p>
 
       <h3>Arrows &amp; connectors</h3>
-      <pre>{`arrow a -> b "label"   # directed, with arrowhead
-arrow a -> b dashed    # dashed
-line  a -- b           # undirected`}</pre>
+      <pre>{`arrow a -> b "label"   # single arrow
+arrow a => b           # double-line arrow
+line  a -- b           # single line
+line  a == b           # double line
+arrow a -> b dashed    # dashed`}</pre>
       <p>
-        Endpoints can be any declared id — primitives <em>or</em> entities (e.g.{' '}
-        <code>arrow engineer -&gt; site</code>). They attach to shape borders automatically.
+        <code>-&gt;</code>/<code>--</code> draw one stroke; <code>=&gt;</code>/<code>==</code> draw
+        two parallel strokes. Endpoints can be any declared id — primitives <em>or</em> entities
+        (e.g. <code>arrow engineer =&gt; site</code>) — and attach to shape borders automatically.
       </p>
 
       <h3>Free-form primitives</h3>

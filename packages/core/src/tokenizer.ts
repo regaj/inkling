@@ -11,7 +11,8 @@
  */
 import type { Token } from './types.js';
 
-const OPERATORS = new Set(['->', '--']);
+// `->`/`--` are single; `=>`/`==` are the double-line variants.
+const OPERATORS = new Set(['->', '--', '=>', '==']);
 
 /** Tokenize a single line (0-based `lineIndex`); returns its tokens in order. */
 export function tokenizeLine(line: string, lineIndex: number): Token[] {

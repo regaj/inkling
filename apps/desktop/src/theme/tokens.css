@@ -8,11 +8,14 @@
 :root {
   /* Light theme */
   --bg: #ededf0;
-  --chrome: rgba(255, 255, 255, 0.55); /* translucent over the window material */
+  /* Three tuned veils over the one native window material, so the toolbar,
+     editor, and help panel read as distinct frosted layers. */
+  --chrome: rgba(255, 255, 255, 0.62); /* toolbar — most frosted */
   --chrome-solid: #f4f4f7; /* opaque fallback (Linux / no effects) */
   --chrome-border: rgba(0, 0, 0, 0.08);
   --editor-bg: #fbfbfd; /* opaque fallback */
-  --editor-veil: rgba(255, 255, 255, 0.5); /* frosted veil over vibrancy */
+  --editor-veil: rgba(252, 252, 255, 0.4); /* editor — glassier, more vibrancy */
+  --help-veil: rgba(249, 247, 255, 0.58); /* help — faint cool tint */
   --editor-gutter: transparent;
   --canvas-paper: #f7f3ea;
   --text-hi: #22222a;
@@ -47,11 +50,12 @@
 
 :root[data-theme='dark'] {
   --bg: #14141b;
-  --chrome: rgba(20, 20, 27, 0.5);
+  --chrome: rgba(24, 24, 32, 0.58); /* toolbar — most frosted */
   --chrome-solid: #1a1a22;
   --chrome-border: rgba(255, 255, 255, 0.08);
   --editor-bg: #191922;
-  --editor-veil: rgba(20, 20, 28, 0.42);
+  --editor-veil: rgba(16, 16, 23, 0.34); /* editor — glassier, more vibrancy */
+  --help-veil: rgba(30, 26, 40, 0.5); /* help — faint cool tint */
   --editor-gutter: transparent;
   --canvas-paper: #1c1b19;
   --text-hi: #eceaf2;
@@ -75,4 +79,5 @@
 :root.no-window-effects {
   --chrome: var(--chrome-solid);
   --editor-veil: var(--editor-bg);
+  --help-veil: var(--chrome-solid);
 }
