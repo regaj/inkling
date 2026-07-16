@@ -77,7 +77,7 @@ function emitNode(n: SceneNode, out: SkeletonElement[]): void {
   const bg = n.fill === 'transparent' ? 'transparent' : n.fill;
 
   if (n.shape === 'text') {
-    out.push({
+    const textEl: SkeletonElement = {
       type: 'text',
       id: n.id,
       x: n.x,
@@ -87,7 +87,11 @@ function emitNode(n: SceneNode, out: SkeletonElement[]): void {
       strokeColor: n.stroke,
       textAlign: n.align ?? 'left',
       verticalAlign: 'top',
-    });
+    };
+    // A fixed width lets Excalidraw align (e.g. center) the text within it —
+    // exact regardless of our per-script width estimate.
+    if (n.fixedWidth) textEl.width = n.w;
+    out.push(textEl);
     return;
   }
 
@@ -112,7 +116,7 @@ function emitNode(n: SceneNode, out: SkeletonElement[]): void {
     roundness: n.rounded ? { type: 3 } : null,
   };
   if (n.label) {
-    el.label = { text: n.label, fontSize: n.fontSize ?? 20, strokeColor: n.stroke };
+    el.label = { text: n.label, fontSize: n.fontSize ?? 20, strokeColor: n.labelColor ?? n.stroke };
   }
   out.push(el);
 
@@ -149,16 +153,29 @@ function emitEdge(e: SceneEdge, boxes: Map<string, SceneNode>, out: SkeletonElem
   const p2 = borderPoint(to, to.shape, fromCenter);
 
   if (e.double) {
-    // Total-participation / double relationship line → two clearly separated
-    // parallel strokes (≈9px apart), drawn explicitly so they read as two lines.
+    // Total-participation / double relationship / double arrow → two clearly
+    // separated parallel strokes (~13px apart), drawn explicitly as two lines.
+    const isArrow = e.endCap === 'arrow' || e.startCap === 'arrow';
     const theta = angle(p1, p2);
-    for (const off of [-4.5, 4.5]) {
+    for (const off of [-6.5, 6.5]) {
       const a = perp(p1, theta, off);
       const b = perp(p2, theta, off);
-      out.push(lineEl(`${e.id}__d${off}`, [
-        [a.x, a.y],
-        [b.x, b.y],
-      ], e.stroke, e.strokeStyle));
+      out.push({
+        type: isArrow ? 'arrow' : 'line',
+        id: `${e.id}__d${off}`,
+        x: a.x,
+        y: a.y,
+        points: [
+          [0, 0],
+          [b.x - a.x, b.y - a.y],
+        ],
+        strokeColor: e.stroke,
+        strokeWidth: STROKE_WIDTH,
+        strokeStyle: e.strokeStyle,
+        roughness: ROUGHNESS,
+        startArrowhead: null,
+        endArrowhead: isArrow && e.endCap === 'arrow' ? 'arrow' : null,
+      });
     }
   } else {
     const isArrow = e.endCap === 'arrow' || e.startCap === 'arrow';

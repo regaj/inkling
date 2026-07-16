@@ -34,8 +34,6 @@ body {
 #root {
   display: grid;
   grid-template-rows: auto 1fr;
-  gap: 8px;
-  padding: 8px;
 }
 
 /* ── Toolbar ─────────────────────────────────────────────────────────────── */
@@ -45,10 +43,10 @@ body {
   gap: 14px;
   padding: 10px 16px;
   background: var(--chrome);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
-  backdrop-filter: blur(24px) saturate(1.4);
-  border: 1px solid var(--chrome-border);
-  border-radius: var(--radius);
+  -webkit-backdrop-filter: blur(30px) saturate(1.5);
+  backdrop-filter: blur(30px) saturate(1.5);
+  border: none;
+  border-bottom: 1px solid var(--chrome-border);
   min-height: 52px;
 }
 
@@ -152,32 +150,33 @@ select:focus-visible,
 /* ── Content split ───────────────────────────────────────────────────────── */
 .content {
   display: grid;
-  grid-template-columns: minmax(320px, 1fr) minmax(360px, 1.35fr);
-  gap: 8px;
+  grid-template-columns: minmax(340px, 1fr) minmax(380px, 1.4fr);
   min-height: 0;
 }
 .content.help-open {
-  grid-template-columns: minmax(300px, 1fr) minmax(340px, 1.2fr) 340px;
+  grid-template-columns: minmax(300px, 1fr) minmax(340px, 1.2fr) 320px;
 }
 
 .panel {
-  border-radius: var(--radius);
   overflow: hidden;
   min-height: 0;
   position: relative;
-  border: 1px solid var(--chrome-border);
+  border: none;
 }
+/* Editor is vibrant (frosted over the window material) — opaque on Linux. */
 .panel.editor {
-  background: var(--editor-bg);
+  background: var(--editor-veil);
 }
+/* Preview stays an opaque "paper" surface, divided from the editor by a hairline. */
 .panel.preview {
   background: var(--canvas-paper);
+  border-left: 1px solid var(--chrome-border);
 }
 
 .panel-label {
   position: absolute;
-  top: 8px;
-  left: 12px;
+  top: 10px;
+  left: 14px;
   z-index: 4;
   font-size: var(--fs-0);
   letter-spacing: 0.08em;
@@ -194,19 +193,19 @@ select:focus-visible,
   height: 100%;
   font-family: var(--font-mono);
   font-size: var(--fs-3);
-  background: var(--editor-bg);
+  background: transparent; /* let the vibrant panel show through */
 }
 .cm-editor .cm-scroller {
   font-family: var(--font-mono);
   line-height: 1.65;
-  padding-top: 26px;
+  padding-top: 30px;
 }
 .cm-editor.cm-focused {
   outline: none;
 }
 .cm-gutters {
-  background: var(--editor-gutter);
-  border-right: 1px solid var(--chrome-border);
+  background: transparent;
+  border-right: none;
   color: var(--text-muted);
 }
 .ink-swatch {
@@ -250,11 +249,11 @@ select:focus-visible,
 /* ── Help panel ──────────────────────────────────────────────────────────── */
 .help {
   background: var(--chrome);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
-  backdrop-filter: blur(24px) saturate(1.4);
-  border: 1px solid var(--chrome-border);
-  border-radius: var(--radius);
-  padding: 14px 16px;
+  -webkit-backdrop-filter: blur(30px) saturate(1.5);
+  backdrop-filter: blur(30px) saturate(1.5);
+  border: none;
+  border-left: 1px solid var(--chrome-border);
+  padding: 16px 18px;
   overflow: auto;
   user-select: text;
 }

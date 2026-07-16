@@ -430,6 +430,8 @@ export interface SceneNode {
   fill: string;
   strokeStyle: StrokeStyle;
   fillStyle: FillStyle;
+  /** Bound-label text color (defaults to `stroke`); used when the shape stroke is transparent. */
+  labelColor?: string;
   /** Emit a second inset outline (weak entity / identifying rel / multivalued attr). */
   double?: boolean;
   /** Rounded corners (IDEF1X dependent entity, UML option). */
@@ -437,6 +439,11 @@ export interface SceneNode {
   fontSize?: number;
   /** Horizontal text alignment for text nodes. */
   align?: 'left' | 'center' | 'right';
+  /**
+   * For text nodes: honor `w` as a fixed layout width and let Excalidraw align
+   * within it (`align`). Makes centering exact regardless of glyph-width guesses.
+   */
+  fixedWidth?: boolean;
   /** Free polyline points (absolute), used for `line` shapes such as markers/underlines. */
   points?: Array<[number, number]>;
   /** When false, the node is decorative and takes no bound text. */

@@ -26,7 +26,7 @@ interface Props {
 function baseTheme(dark: boolean) {
   return EditorView.theme(
     {
-      '&': { height: '100%', backgroundColor: 'var(--editor-bg)', color: 'var(--text-hi)' },
+      '&': { height: '100%', backgroundColor: 'transparent', color: 'var(--text-hi)' },
       '.cm-content': { caretColor: 'var(--accent)' },
       '.cm-cursor, .cm-dropCursor': { borderLeftColor: 'var(--accent)' },
       '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection': {

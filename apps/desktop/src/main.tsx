@@ -13,6 +13,11 @@ import '@fontsource/ibm-plex-mono/500.css';
 import './theme/tokens.css';
 import './theme/styles.css';
 import { App } from './App.js';
+import { registerScriptFonts } from './fonts.js';
+
+// Add handwritten Hebrew/Arabic faces to Excalifont (async; Excalidraw redraws
+// when they load). Fire-and-forget so it never blocks first paint.
+void registerScriptFonts();
 
 const container = document.getElementById('root');
 if (!container) throw new Error('Root element not found');

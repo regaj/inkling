@@ -59,6 +59,12 @@ importers:
       '@excalidraw/excalidraw':
         specifier: ^0.18.0
         version: 0.18.1(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@fontsource/amatic-sc':
+        specifier: ^5.1.0
+        version: 5.2.7
+      '@fontsource/aref-ruqaa':
+        specifier: ^5.1.0
+        version: 5.2.8
       '@fontsource/bricolage-grotesque':
         specifier: ^5.1.0
         version: 5.2.10
@@ -681,6 +687,12 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
+  '@fontsource/amatic-sc@5.2.7':
+    resolution: {integrity: sha512-fZanMNAXHSguiPeZqEQ8gFMgK0mQKivdDEQx+Z/zL29fgI7I3ZDLjNd0j/+T0rq7Gq50QUCdOGdK+Ues7ukjDg==}
+
+  '@fontsource/aref-ruqaa@5.2.8':
+    resolution: {integrity: sha512-SQ74sGHRdxqFeydiY0aKat4z6TN+JmaP6BNLjPCyovgjvn5Nbj5Kl/YlVDzAJlv1tuvHAvm945kA/g5/gh0qJw==}
 
   '@fontsource/bricolage-grotesque@5.2.10':
     resolution: {integrity: sha512-V2xS+1P7C8IrSypXLUx/bLtX/LsTlYtV2k2CsU+S/0t8qepZ2hvKSlyJIx7Ub/iY8Bbnj+IjAuUF9nvFz+BbIg==}
@@ -3662,6 +3674,10 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
 
   '@floating-ui/utils@0.2.12': {}
+
+  '@fontsource/amatic-sc@5.2.7': {}
+
+  '@fontsource/aref-ruqaa@5.2.8': {}
 
   '@fontsource/bricolage-grotesque@5.2.10': {}
 

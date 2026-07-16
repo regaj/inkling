@@ -3,11 +3,14 @@ import { compile } from '../src/compile.js';
 import { toExcalidrawSkeleton, wrapExcalidrawFile } from '../src/excalidraw.js';
 
 describe('toExcalidrawSkeleton — golden structure', () => {
-  it('labels boxed entities with a header text node', () => {
+  it('labels boxed entities with a centered bound-text header', () => {
     const { scene } = compile('entity user "User"', { notation: 'chen' });
     const els = toExcalidrawSkeleton(scene);
     expect(els.find((e) => e.id === 'user')?.type).toBe('rectangle');
-    expect(els.find((e) => e.id === 'hdr:user')?.text).toBe('User');
+    // Header is bound text in a transparent cell (centered by Excalidraw).
+    const hdr = els.find((e) => e.id === 'hdr:user');
+    expect(hdr?.label?.text).toBe('User');
+    expect(hdr?.strokeColor).toBe('transparent');
   });
 
   it('emits bound-text labels on relationship diamonds and classic ellipse attrs', () => {

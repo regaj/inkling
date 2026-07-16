@@ -21,6 +21,8 @@
     "@codemirror/state": "^6.4.1",
     "@codemirror/view": "^6.34.1",
     "@excalidraw/excalidraw": "^0.18.0",
+    "@fontsource/amatic-sc": "^5.1.0",
+    "@fontsource/aref-ruqaa": "^5.1.0",
     "@fontsource/bricolage-grotesque": "^5.1.0",
     "@fontsource/ibm-plex-mono": "^5.1.0",
     "@fontsource/ibm-plex-sans": "^5.1.0",

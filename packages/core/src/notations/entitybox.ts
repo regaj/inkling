@@ -8,9 +8,9 @@
  */
 import type { Attribute, Entity, SceneNode } from '../types.js';
 import type { Box } from '../geometry.js';
-import { SIZE, lineNode, measure, rectNode, textNode } from './shared.js';
+import { SIZE, lineNode, measure, rectNode } from './shared.js';
 
-const ROW_PAD_X = 14;
+const ROW_PAD_X = 18;
 
 /** Row text with UML-flavored markers. */
 export function rowText(a: Attribute): string {
@@ -62,14 +62,18 @@ export function emitEntityBox(
     }),
   );
 
-  // Header name, centered.
+  // Header name — bound text in a transparent box so Excalidraw centers it
+  // exactly (H+V), for any script including RTL.
   nodes.push(
-    textNode(
-      `hdr:${e.id}`,
-      { x: box.x + box.w / 2 - measure(e.label, SIZE.fontLabel) / 2, y: box.y + 9 },
-      e.label,
-      { stroke: palette.text, fontSize: SIZE.fontLabel, align: 'center', role: 'label' },
-    ),
+    rectNode(`hdr:${e.id}`, { x: box.x, y: box.y, w: box.w, h: SIZE.headerH }, {
+      role: 'label',
+      label: e.label,
+      labelColor: palette.text,
+      stroke: 'transparent',
+      fill: 'transparent',
+      fontSize: SIZE.fontLabel,
+      bindable: false,
+    }),
   );
 
   // Header rule.
@@ -85,26 +89,31 @@ export function emitEntityBox(
   );
 
   const keyCount = rows.filter((a) => a.key || a.partial).length;
+  const cx = box.x + box.w / 2;
   rows.forEach((a, idx) => {
-    const ry = box.y + SIZE.headerH + 8 + idx * SIZE.rowH;
+    const ry = box.y + SIZE.headerH + idx * SIZE.rowH;
     const text = rowText(a);
+    const tw = measure(text, SIZE.fontRow);
+    // Each row is bound, centered text in a transparent cell.
     nodes.push(
-      textNode(`row:${e.id}:${a.id}`, { x: box.x + ROW_PAD_X, y: ry }, text, {
-        stroke: palette.text,
-        fontSize: SIZE.fontRow,
-        align: 'left',
+      rectNode(`row:${e.id}:${a.id}`, { x: box.x, y: ry, w: box.w, h: SIZE.rowH }, {
         role: 'label',
+        label: text,
+        labelColor: palette.text,
+        stroke: 'transparent',
+        fill: 'transparent',
+        fontSize: SIZE.fontRow,
+        bindable: false,
       }),
     );
     if (a.key || a.partial) {
-      const tw = measure(text, SIZE.fontRow);
-      const uy = ry + SIZE.fontRow + 1;
+      const uy = ry + SIZE.rowH / 2 + SIZE.fontRow * 0.5;
       nodes.push(
         lineNode(
           `krule:${e.id}:${a.id}`,
           [
-            [box.x + ROW_PAD_X, uy],
-            [box.x + ROW_PAD_X + tw, uy],
+            [cx - tw / 2, uy],
+            [cx + tw / 2, uy],
           ],
           { stroke: palette.stroke, strokeStyle: a.partial ? 'dashed' : 'solid' },
         ),

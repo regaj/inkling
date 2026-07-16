@@ -8,11 +8,12 @@
 :root {
   /* Light theme */
   --bg: #ededf0;
-  --chrome: rgba(255, 255, 255, 0.6);
+  --chrome: rgba(255, 255, 255, 0.55); /* translucent over the window material */
   --chrome-solid: #f4f4f7; /* opaque fallback (Linux / no effects) */
   --chrome-border: rgba(0, 0, 0, 0.08);
-  --editor-bg: #fbfbfd;
-  --editor-gutter: #f1f1f5;
+  --editor-bg: #fbfbfd; /* opaque fallback */
+  --editor-veil: rgba(255, 255, 255, 0.5); /* frosted veil over vibrancy */
+  --editor-gutter: transparent;
   --canvas-paper: #f7f3ea;
   --text-hi: #22222a;
   --text-muted: #6b6b78;
@@ -46,11 +47,12 @@
 
 :root[data-theme='dark'] {
   --bg: #14141b;
-  --chrome: rgba(20, 20, 27, 0.55);
+  --chrome: rgba(20, 20, 27, 0.5);
   --chrome-solid: #1a1a22;
   --chrome-border: rgba(255, 255, 255, 0.08);
   --editor-bg: #191922;
-  --editor-gutter: #20202b;
+  --editor-veil: rgba(20, 20, 28, 0.42);
+  --editor-gutter: transparent;
   --canvas-paper: #1c1b19;
   --text-hi: #eceaf2;
   --text-muted: #8a8798;
@@ -72,4 +74,5 @@
  */
 :root.no-window-effects {
   --chrome: var(--chrome-solid);
+  --editor-veil: var(--editor-bg);
 }

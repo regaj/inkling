@@ -36,11 +36,35 @@ export const SIZE = {
 } as const;
 
 /**
- * Estimate the rendered width of `text` at `fontSize`. Excalifont runs wide, so
- * this is deliberately generous — better an oversized shape than clipped text.
+ * Estimate the rendered width of `text` at `fontSize`, per-character and
+ * script-aware. Latin uses Excalifont's (wide) hand-drawn metrics; Hebrew,
+ * Arabic, and CJK render in a fallback font that is noticeably wider, so they
+ * get larger advances — otherwise their labels clip and centering drifts.
+ * Deliberately generous throughout: an oversized shape beats clipped text.
  */
 export function measure(text: string, fontSize: number = SIZE.fontLabel): number {
-  return text.length * fontSize * 0.64;
+  let units = 0;
+  for (const ch of text) {
+    const c = ch.codePointAt(0) ?? 0;
+    if (ch === ' ') units += 0.42;
+    else if (c >= 0x0590 && c <= 0x05ff) units += 0.75; // Hebrew (Amatic SC, condensed)
+    else if (c >= 0x0600 && c <= 0x08ff) units += 0.95; // Arabic & related (Aref Ruqaa, wide)
+    else if (c >= 0x1100 && c <= 0xd7ff) units += 1.08; // CJK / Hangul
+    else if (c >= 0xf900 && c <= 0xfaff) units += 1.08; // CJK compatibility
+    else units += 0.68; // Latin & the rest (Excalifont is wide)
+  }
+  // Extra headroom: bound text wraps at the exact container width, so a small
+  // safety margin keeps single-line labels from clipping or wrapping.
+  return units * fontSize + fontSize * 0.4;
+}
+
+/** True if `text` contains any right-to-left characters (Hebrew / Arabic). */
+export function isRtl(text: string): boolean {
+  for (const ch of text) {
+    const c = ch.codePointAt(0) ?? 0;
+    if ((c >= 0x0590 && c <= 0x05ff) || (c >= 0x0600 && c <= 0x08ff)) return true;
+  }
+  return false;
 }
 
 /** Width that comfortably fits `label` on one line, clamped to a minimum. */
@@ -78,6 +102,7 @@ export function fitEllipse(label: string, fontSize: number = SIZE.fontRow): { w:
 export interface NodeOpts {
   role: SceneNode['role'];
   label?: string;
+  labelColor?: string;
   stroke: string;
   fill: string;
   strokeStyle?: StrokeStyle;
@@ -98,6 +123,7 @@ function node(id: string, shape: SceneNode['shape'], box: Box, opts: NodeOpts): 
     w: box.w,
     h: box.h,
     label: opts.label,
+    labelColor: opts.labelColor,
     role: opts.role,
     stroke: opts.stroke,
     fill: opts.fill,
@@ -123,10 +149,17 @@ export function textNode(
   id: string,
   at: Point,
   text: string,
-  opts: { stroke: string; fontSize?: number; align?: SceneNode['align']; role?: SceneNode['role'] },
+  opts: {
+    stroke: string;
+    fontSize?: number;
+    align?: SceneNode['align'];
+    role?: SceneNode['role'];
+    /** Fixed layout width — Excalidraw aligns the text within it (exact centering). */
+    width?: number;
+  },
 ): SceneNode {
   const fontSize: number = opts.fontSize ?? SIZE.fontRow;
-  const w = measure(text, fontSize);
+  const w = opts.width ?? measure(text, fontSize);
   return {
     id,
     shape: 'text',
@@ -141,6 +174,7 @@ export function textNode(
     strokeStyle: 'solid',
     fillStyle: 'solid',
     align: opts.align ?? 'left',
+    fixedWidth: opts.width !== undefined,
     bindable: false,
   };
 }
