@@ -73,7 +73,11 @@ pub fn run() {
                 #[cfg(target_os = "macos")]
                 {
                     use tauri_plugin_decorum::WebviewWindowExt;
-                    let _ = window.set_traffic_lights_inset(16.0, 16.0);
+                    // decorum centers the buttons at (y + button_height)/2 + 4 from
+                    // the window top. Our 46px toolbar (border-box, 1px bottom
+                    // border) centers its content at 22.5px, so y = 23 lines the
+                    // traffic lights up exactly with the brand and buttons.
+                    let _ = window.set_traffic_lights_inset(16.0, 23.0);
                 }
             }
             Ok(())
