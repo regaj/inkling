@@ -74,8 +74,10 @@ export function layered(
   }
   const layerIdx = [...layers.keys()].sort((a, b) => a - b);
 
-  const mainOf = (id: string): number => (opts.direction === 'LR' ? byId.get(id)!.w : byId.get(id)!.h);
-  const crossOf = (id: string): number => (opts.direction === 'LR' ? byId.get(id)!.h : byId.get(id)!.w);
+  const horizontal = opts.direction === 'LR' || opts.direction === 'RL';
+  const reverse = opts.direction === 'RL' || opts.direction === 'BT';
+  const mainOf = (id: string): number => (horizontal ? byId.get(id)!.w : byId.get(id)!.h);
+  const crossOf = (id: string): number => (horizontal ? byId.get(id)!.h : byId.get(id)!.w);
 
   // Main-axis offset for each layer (cumulative max extent).
   const layerMain = new Map<number, number>();
@@ -94,10 +96,11 @@ export function layered(
     const totalCross = ids.reduce((s, id) => s + crossOf(id) + opts.gapCross, 0) - opts.gapCross;
     let cursor = -totalCross / 2;
     for (const id of ids) {
-      const main = layerMain.get(li)! + (layerMainSize.get(li)! - mainOf(id)) / 2;
+      const mainRaw = layerMain.get(li)! + (layerMainSize.get(li)! - mainOf(id)) / 2;
+      const main = reverse ? -mainRaw : mainRaw;
       const cross = cursor;
       cursor += crossOf(id) + opts.gapCross;
-      pos.set(id, opts.direction === 'LR' ? { x: main, y: cross } : { x: cross, y: main });
+      pos.set(id, horizontal ? { x: main, y: cross } : { x: cross, y: main });
     }
   }
 

@@ -58,11 +58,16 @@ export { SAMPLE_INK } from './sample.js';
 export {
   NOTATIONS,
   DEFAULT_NOTATION,
+  DIRECTIONS,
+  STRUCTURE_KINDS,
 } from './types.js';
 export type {
   NotationName,
   NotationRenderer,
   Direction,
+  StructureKind,
+  StructureOp,
+  DataStructure,
   Cardinality,
   Diagnostic,
   DiagnosticCode,

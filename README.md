@@ -26,6 +26,8 @@ Built with **Tauri v2 + Vite + React + TypeScript**, using **CodeMirror 6** as t
 - **One model, five notations.** Write the ER model once; render it as Chen, Crow's Foot / IE, UML, IDEF1X, or Min-Max. Switch live from the notation picker without touching your text.
 - **Live preview.** The canvas is recompiled from the DSL as you type. What you see is exactly what you export — the same Excalidraw elements feed both.
 - **Compact, readable DSL.** One statement per line, case-insensitive keywords, `#` comments. Semantic ER statements (`entity`, `weak`, `attr`, `rel`, `link`) plus raw primitives (`rect`, `ellipse`, `diamond`, `text`, `arrow`, `line`).
+- **Flowcharts.** Connect primitives with arrows and set `direction` (`TB` / `BT` / `LR` / `RL`); coordless shapes auto-layout along the flow.
+- **Data structures.** `array`, `stack`, `queue`, and `linked_list` draw real shapes — with `push` / `pop` / `enqueue` / `dequeue` / `append` operations that update the drawing live.
 - **Theme-aware, multi-format export.** `.excalidraw` (re-editable), SVG, PNG (@1x/@2x/@3x), JPG, PDF (vector with raster fallback), and copy-to-clipboard (PNG + SVG). Exported artifacts carry their own light/dark and background settings, independent of the editor theme.
 - **Headless CLI.** Render `.ink` files to images from the command line — great for CI, docs pipelines, and batch jobs.
 - **Native and cross-platform.** macOS, Windows, and Linux, with platform-appropriate window effects (macOS vibrancy, Windows Mica/Acrylic, Linux opaque fallback).

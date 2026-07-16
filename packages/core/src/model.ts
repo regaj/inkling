@@ -9,6 +9,7 @@
  */
 import type {
   Attribute,
+  DataStructure,
   Diagnostic,
   Direction,
   Entity,
@@ -33,6 +34,7 @@ export function buildModel(ast: Statement[]): BuildResult {
 
   const entities = new Map<string, Entity>();
   const relationships = new Map<string, Relationship>();
+  const structures = new Map<string, DataStructure>();
   const model: Model = {
     notation,
     direction,
@@ -41,6 +43,7 @@ export function buildModel(ast: Statement[]): BuildResult {
     relationships: [],
     primitives: [],
     connectors: [],
+    structures: [],
   };
 
   // Track the declaration namespace shared by connector references.
@@ -93,6 +96,16 @@ export function buildModel(ast: Statement[]): BuildResult {
           attributes: [],
         };
         relationships.set(stmt.id, rel);
+        break;
+      }
+      case 'structure': {
+        declare(stmt.id, stmt);
+        structures.set(stmt.id, {
+          kind: stmt.kind,
+          id: stmt.id,
+          label: stmt.label,
+          values: [...stmt.values],
+        });
         break;
       }
       case 'shape': {
@@ -192,6 +205,34 @@ export function buildModel(ast: Statement[]): BuildResult {
         });
         break;
       }
+      case 'structure-op': {
+        const struct = structures.get(stmt.id);
+        if (!struct) {
+          diagnostics.push({
+            severity: 'error',
+            message: `${stmt.op} references unknown structure "${stmt.id}"`,
+            line: stmt.pos.line,
+            col: stmt.pos.col,
+            length: stmt.id.length,
+            code: 'unknown-id',
+          });
+          break;
+        }
+        switch (stmt.op) {
+          case 'push':
+          case 'append':
+          case 'enqueue':
+            if (stmt.value !== undefined) struct.values.push(stmt.value);
+            break;
+          case 'pop':
+            struct.values.pop();
+            break;
+          case 'dequeue':
+            struct.values.shift();
+            break;
+        }
+        break;
+      }
       case 'connector': {
         for (const ref of [stmt.from, stmt.to]) {
           if (!declaredIds.has(ref)) {
@@ -225,6 +266,7 @@ export function buildModel(ast: Statement[]): BuildResult {
   model.title = title;
   model.entities = [...entities.values()];
   model.relationships = [...relationships.values()];
+  model.structures = [...structures.values()];
 
   return { model, diagnostics };
 }

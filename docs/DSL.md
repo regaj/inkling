@@ -31,7 +31,7 @@ Directives configure the whole document. Put them at the top by convention.
 | --- | --- | --- | --- |
 | `notation <name>` | `chen`, `crowsfoot`, `uml`, `idef1x`, `minmax` | `chen` | The notation used to render the semantic model. The app's notation picker overrides this live. |
 | `title "..."` | any label | — | An optional document/export title. It is metadata, not drawn on the canvas. |
-| `direction <LR\|TB>` | `LR`, `TB` | `LR` | Auto-layout flow hint: left-to-right or top-to-bottom. |
+| `direction <dir>` | `LR`, `RL`, `TB`, `BT` | `LR` | Auto-layout flow direction — left→right, right→left, top→bottom, bottom→top. Applies to ER graphs, flowcharts, and the layered layout in general. |
 
 ```ink
 notation chen
@@ -192,6 +192,75 @@ text caption "Draft — not final" @40,320 size=14
 arrow note -> hub "see hub" dashed
 line hub -- note double
 ```
+
+---
+
+## Flowcharts & direction
+
+A flowchart is just primitives connected by arrows. **Leave off `@x,y`** and
+Inkling auto-lays-out the shapes by following the connector graph in the
+document's `direction`:
+
+```ink
+direction TB          # TB · BT · LR · RL
+rect    start "Start"
+diamond auth  "Valid credentials?"
+rect    home  "Dashboard"
+rect    retry "Show error"
+rect    stop  "End"
+
+arrow start -> auth
+arrow auth  -> home  "yes"
+arrow auth  -> retry "no"
+arrow retry -> auth
+arrow home  -> stop
+```
+
+- `TB` top→bottom · `BT` bottom→top · `LR` left→right · `RL` right→left.
+- Diamonds read as decisions, rectangles as steps, ellipses as terminals — but nothing is enforced; use any shape.
+- Mixing placed (`@x,y`) and coordless shapes is fine: placed ones stay put, the rest flow.
+- The same `direction` also orients ER diagrams.
+
+---
+
+## Data structures
+
+Inkling can draw common data structures and mutate them with operation
+statements. Values are given as a comma-separated list in brackets; they may be
+numbers or bare words (a value can't itself contain a comma).
+
+| Statement | Draws |
+| --- | --- |
+| `array <id> "Label" [v1, v2, …]` | A row of indexed cells. |
+| `stack <id> "Label" [v1, v2, …]` | A vertical LIFO — the **last** value is the top. |
+| `queue <id> "Label" [v1, v2, …]` | A horizontal FIFO with `front` / `rear` markers. |
+| `linked_list <id> "Label" [v1, …]` | `[value \| next]` nodes chained by pointer arrows, ending at `⌀`. |
+
+Operations mutate a structure (the document recompiles, so the drawing updates live):
+
+| Operation | Effect |
+| --- | --- |
+| `push <id> <value>` | Append to the top of a stack (or end of any structure). |
+| `pop <id>` | Remove the top / last value. |
+| `enqueue <id> <value>` | Add to the rear of a queue. |
+| `dequeue <id>` | Remove from the front. |
+| `append <id> <value>` | Append a value (array / linked list). |
+
+```ink
+stack calls "Call Stack" [main, parse, eval]
+push calls render          # render is now the top
+
+queue jobs "Job Queue" [a, b, c]
+enqueue jobs d
+dequeue jobs               # a leaves the front
+
+linked_list list "List" [7, 14, 21]
+array scores "Scores" [10, 20, 30]
+append scores 40
+```
+
+Structures are notation-independent (identical in every notation) and are laid
+out beneath any ER / flowchart content.
 
 ---
 

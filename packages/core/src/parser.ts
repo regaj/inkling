@@ -21,6 +21,8 @@ import type {
   Pos,
   PrimitiveKind,
   Statement,
+  StructureKind,
+  StructureOp,
   Token,
 } from './types.js';
 import { NOTATIONS } from './types.js';
@@ -77,6 +79,17 @@ function parseLine(tokens: Token[], ast: Statement[], diags: Diagnostic[]): void
     case 'arrow':
     case 'line':
       return parseConnector(tokens, ast, diags, keyword as 'arrow' | 'line');
+    case 'array':
+    case 'stack':
+    case 'queue':
+    case 'linked_list':
+      return parseStructure(tokens, ast, diags, keyword as StructureKind);
+    case 'push':
+    case 'pop':
+    case 'enqueue':
+    case 'dequeue':
+    case 'append':
+      return parseStructureOp(tokens, ast, diags, keyword as StructureOp);
     default:
       diag(diags, 'unknown-command', `Unknown command "${head.value}"`, head);
   }
@@ -113,8 +126,13 @@ function parseDirection(tokens: Token[], ast: Statement[], diags: Diagnostic[]):
   const arg = tokens[1];
   if (!arg) return missing(diags, 'direction <LR|TB>', tokens[0]);
   const dir = arg.value.toUpperCase();
-  if (dir !== 'LR' && dir !== 'TB') {
-    return diag(diags, 'bad-direction', `Direction must be LR or TB, got "${arg.value}"`, arg);
+  if (dir !== 'LR' && dir !== 'RL' && dir !== 'TB' && dir !== 'BT') {
+    return diag(
+      diags,
+      'bad-direction',
+      `Direction must be LR, RL, TB, or BT, got "${arg.value}"`,
+      arg,
+    );
   }
   ast.push({ type: 'direction', direction: dir as Direction, pos: tokens[0].pos });
 }
@@ -328,6 +346,70 @@ function parseConnector(
     double: flags.has('double'),
     pos: tokens[0].pos,
   });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Data structures
+// ─────────────────────────────────────────────────────────────────────────────
+
+function parseStructure(
+  tokens: Token[],
+  ast: Statement[],
+  diags: Diagnostic[],
+  kind: StructureKind,
+): void {
+  const idTok = tokens[1];
+  if (!idTok || idTok.kind !== 'word') {
+    return missing(diags, `${kind} <id> "Label" [v1, v2, ...]`, tokens[0]);
+  }
+  const labelTok = tokens[2];
+  const hasLabel = labelTok && labelTok.kind === 'string';
+  const label = hasLabel ? labelTok.value : idTok.value;
+  const rest = tokens.slice(hasLabel ? 3 : 2);
+  const values = parseValueList(rest);
+  ast.push({ type: 'structure', kind, id: idTok.value, label, values, pos: tokens[0].pos });
+}
+
+function parseStructureOp(
+  tokens: Token[],
+  ast: Statement[],
+  diags: Diagnostic[],
+  op: StructureOp,
+): void {
+  const idTok = tokens[1];
+  if (!idTok || idTok.kind !== 'word') {
+    const usage = op === 'pop' || op === 'dequeue' ? `${op} <id>` : `${op} <id> <value>`;
+    return missing(diags, usage, tokens[0]);
+  }
+  const needsValue = op !== 'pop' && op !== 'dequeue';
+  const valueTok = tokens[2];
+  if (needsValue && !valueTok) {
+    return missing(diags, `${op} <id> <value>`, tokens[0]);
+  }
+  ast.push({
+    type: 'structure-op',
+    op,
+    id: idTok.value,
+    value: needsValue ? valueTok.value : undefined,
+    pos: tokens[0].pos,
+  });
+}
+
+/**
+ * Parse a bracketed value list, e.g. `[10, 20, 30]`. Whitespace-insensitive:
+ * the tokens are rejoined and the run between `[` and `]` is split on commas.
+ * Values are simple (numbers / bare words / single-token strings) — commas
+ * inside a value are not supported.
+ */
+function parseValueList(tokens: Token[]): string[] {
+  if (tokens.length === 0) return [];
+  const joined = tokens.map((t) => t.value).join(' ');
+  const match = joined.match(/\[(.*)\]/s);
+  const inner = match ? match[1] : joined;
+  return inner
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

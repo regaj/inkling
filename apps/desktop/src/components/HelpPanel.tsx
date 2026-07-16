@@ -49,6 +49,38 @@ link deliver project  N total`}</pre>
         identifying → double border · cardinality → connector label.
       </p>
 
+      <h3>Data structures</h3>
+      <pre>{`array  a  "Scores" [10, 20, 30]
+stack  s  "Stack"  [1, 2, 3]     # 3 is the top
+queue  q  "Queue"  [a, b, c]     # a is the front
+linked_list ll "List" [x, y, z]
+
+# append / remove values (recompiles live)
+push    s 4      # onto the stack top
+pop     s        # remove the top
+enqueue q d      # to the queue rear
+dequeue q        # from the front
+append  a 40     # array / list`}</pre>
+      <p>Each renders real shapes — cells, pointers, front/rear and top markers.</p>
+
+      <h3>Flowcharts &amp; direction</h3>
+      <p>
+        Build flowcharts from primitives and connect them; leave off <code>@x,y</code> and
+        they auto-layout along <code>direction</code>:
+      </p>
+      <pre>{`direction TB      # TB · BT · LR · RL
+rect    a "Start"
+diamond b "Valid?"
+rect    c "Save"
+rect    d "Reject"
+arrow a -> b
+arrow b -> c "yes"
+arrow b -> d "no"`}</pre>
+      <p>
+        <code>TB</code> top→bottom · <code>BT</code> bottom→top · <code>LR</code> left→right ·{' '}
+        <code>RL</code> right→left. Same for ER diagrams.
+      </p>
+
       <h3>Free-form primitives</h3>
       <pre>{`rect  a "A" @40,40 160x64 fill=#e5ffd6 double
 arrow a -> b "label" dashed

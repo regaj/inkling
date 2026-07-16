@@ -56,8 +56,24 @@ export const NOTATIONS: readonly NotationName[] = [
 
 export const DEFAULT_NOTATION: NotationName = 'chen';
 
-/** Layout flow hint. */
-export type Direction = 'LR' | 'TB';
+/**
+ * Layout flow direction — used by the ER graph layout and by flowcharts built
+ * from primitives. `LR` left→right, `RL` right→left, `TB` top→bottom, `BT`
+ * bottom→top.
+ */
+export type Direction = 'LR' | 'RL' | 'TB' | 'BT';
+
+export const DIRECTIONS: readonly Direction[] = ['LR', 'RL', 'TB', 'BT'] as const;
+
+/** Kinds of data structure the DSL can draw. */
+export type StructureKind = 'array' | 'stack' | 'queue' | 'linked_list';
+
+export const STRUCTURE_KINDS: readonly StructureKind[] = [
+  'array',
+  'stack',
+  'queue',
+  'linked_list',
+] as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Cardinality
@@ -91,7 +107,9 @@ export type Statement =
   | RelStmt
   | LinkStmt
   | PrimitiveShapeStmt
-  | PrimitiveConnectorStmt;
+  | PrimitiveConnectorStmt
+  | StructureStmt
+  | StructureOpStmt;
 
 export interface NotationStmt {
   type: 'notation';
@@ -195,6 +213,27 @@ export interface PrimitiveConnectorStmt {
   pos: Pos;
 }
 
+/** `array|stack|queue|linked_list <id> "Label" [v1, v2, ...]`. */
+export interface StructureStmt {
+  type: 'structure';
+  kind: StructureKind;
+  id: string;
+  label: string;
+  values: string[];
+  pos: Pos;
+}
+
+export type StructureOp = 'push' | 'pop' | 'enqueue' | 'dequeue' | 'append';
+
+/** `push|append|enqueue <id> <value>` / `pop|dequeue <id>`. */
+export interface StructureOpStmt {
+  type: 'structure-op';
+  op: StructureOp;
+  id: string;
+  value?: string;
+  pos: Pos;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Diagnostics
 // ─────────────────────────────────────────────────────────────────────────────
@@ -286,6 +325,14 @@ export interface PrimitiveConnector {
   double: boolean;
 }
 
+/** A data structure with its current (post-operations) values. */
+export interface DataStructure {
+  kind: StructureKind;
+  id: string;
+  label: string;
+  values: string[];
+}
+
 /** The fully resolved, notation-independent model. */
 export interface Model {
   notation: NotationName;
@@ -295,6 +342,7 @@ export interface Model {
   relationships: Relationship[];
   primitives: PrimitiveShape[];
   connectors: PrimitiveConnector[];
+  structures: DataStructure[];
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

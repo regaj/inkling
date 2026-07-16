@@ -46,7 +46,18 @@ const COMMANDS = [
   'text',
   'arrow',
   'line',
+  'array',
+  'stack',
+  'queue',
+  'linked_list',
+  'push',
+  'pop',
+  'enqueue',
+  'dequeue',
+  'append',
 ];
+
+const STRUCTURE_OPS = new Set(['push', 'pop', 'enqueue', 'dequeue', 'append']);
 const FLAGS = new Set([
   'double',
   'dashed',
@@ -99,6 +110,11 @@ const inkStream = StreamLanguage.define<InkState>({
     if (stream.match(/^#[0-9a-fA-F]{3,8}\b/)) {
       state.n++;
       return 'color';
+    }
+    // A bracketed value list, e.g. [10, 20, 30].
+    if (stream.match(/^\[[^\]]*\]?/)) {
+      state.n++;
+      return 'number';
     }
     if (stream.match(/^[a-zA-Z_]+=/)) {
       state.n++;
@@ -222,9 +238,11 @@ const swatchPlugin = ViewPlugin.fromClass(
 const OPTION_KEYS = ['fill=', 'stroke=', 'size='];
 const PALETTE = ['#0E7C86', '#B9852B', '#2E8B57', '#C0392B', '#1E6FB8', '#7A3EBF', '#e5ffd6', '#ffffff'];
 
-function declaredIds(text: string): string[] {
+function declaredIds(text: string, kinds?: RegExp): string[] {
   const ids = new Set<string>();
-  const re = /^\s*(?:entity|weak|rel|rect|ellipse|diamond|text)\s+([A-Za-z_]\w*)/gm;
+  const re =
+    kinds ??
+    /^\s*(?:entity|weak|rel|rect|ellipse|diamond|text|array|stack|queue|linked_list)\s+([A-Za-z_]\w*)/gm;
   let m: RegExpExecArray | null;
   while ((m = re.exec(text))) ids.add(m[1]);
   return [...ids];
@@ -255,7 +273,18 @@ function inkCompletions(ctx: CompletionContext): CompletionResult | null {
     return { from, options: NOTATIONS.map((label) => ({ label, type: 'enum' })) };
   }
   if (cmd === 'direction') {
-    return { from, options: ['LR', 'TB'].map((label) => ({ label, type: 'enum' })) };
+    return { from, options: ['LR', 'RL', 'TB', 'BT'].map((label) => ({ label, type: 'enum' })) };
+  }
+  if (STRUCTURE_OPS.has(cmd)) {
+    // Suggest ids of declared data structures.
+    const structRe = /^\s*(?:array|stack|queue|linked_list)\s+([A-Za-z_]\w*)/gm;
+    return {
+      from,
+      options: declaredIds(ctx.state.doc.toString(), structRe).map((label) => ({
+        label,
+        type: 'variable',
+      })),
+    };
   }
   if (['arrow', 'line', 'link', 'rel'].includes(cmd)) {
     return {
