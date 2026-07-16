@@ -1,61 +1,61 @@
-// Generates a 1024×1024 source PNG for the app icon: a warm off-white ink drop
-// on the peacock-ink accent. Run `tauri icon` on the output to produce the
-// platform icon set. Dependency-free (Node zlib + a tiny PNG encoder).
+// Generates a 1024×1024 source PNG for the app icon: a macOS-style squircle
+// (rounded, inset, transparent outside) with a peacock-ink gradient and a warm
+// off-white ink drop. Reads well on both light and dark docks. Run `tauri icon`
+// on the output to produce the platform icon set. Dependency-free.
 import { deflateSync } from 'node:zlib';
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 const SIZE = 1024;
-const PEACOCK = [0x0e, 0x7c, 0x86];
-const PEACOCK_DK = [0x0a, 0x62, 0x6b];
+const MARGIN = 92; // transparent inset around the squircle (macOS convention)
+const RADIUS = 190; // corner radius
+const PEACOCK = [0x14, 0x8a, 0x96];
+const PEACOCK_DK = [0x0a, 0x54, 0x5d];
 const INK = [0xfb, 0xfb, 0xfd];
 
-function mix(a, b, t) {
-  return a.map((c, i) => Math.round(c + (b[i] - c) * t));
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const mix = (a, b, t) => a.map((c, i) => Math.round(c + (b[i] - c) * t));
+
+// Signed distance to a rounded rectangle (negative inside).
+function roundedRectSDF(x, y, cx, cy, halfW, halfH, r) {
+  const qx = Math.abs(x - cx) - (halfW - r);
+  const qy = Math.abs(y - cy) - (halfH - r);
+  return Math.min(Math.max(qx, qy), 0) + Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) - r;
 }
 
-// Signed-distance helpers for a rounded droplet (circle + tapered top).
-function droplet(x, y) {
+// Signed distance to a teardrop (circle + tapered top), negative inside.
+function dropletSDF(x, y) {
   const cx = SIZE / 2;
   const cy = SIZE * 0.6;
-  const r = SIZE * 0.3;
+  const r = SIZE * 0.24;
   const dCircle = Math.hypot(x - cx, y - cy) - r;
-  // Tapered tail toward the top.
-  const ty = SIZE * 0.14;
-  const spread = (y - ty) / (cy - ty);
-  const halfWidth = Math.max(0, spread) * r;
-  const dTail = y < cy ? Math.abs(x - cx) - halfWidth : Infinity;
-  return Math.min(dCircle, Math.max(dTail, y < ty ? Infinity : dCircle > 0 ? dTail : -1));
+  const ty = SIZE * 0.26;
+  if (y >= cy) return dCircle;
+  const spread = clamp01((y - ty) / (cy - ty));
+  const halfWidth = spread * r;
+  const dTail = Math.abs(x - cx) - halfWidth;
+  return y < ty ? Math.hypot(x - cx, y - ty) - 1 : Math.max(dTail, dCircle > 0 ? dTail : -1);
 }
 
+const half = (SIZE - 2 * MARGIN) / 2;
 const raw = Buffer.alloc(SIZE * (SIZE * 4 + 1));
 let p = 0;
 for (let y = 0; y < SIZE; y++) {
   raw[p++] = 0; // filter: none
   for (let x = 0; x < SIZE; x++) {
-    // Radial background shading.
-    const t = Math.hypot(x - SIZE / 2, y - SIZE / 2) / (SIZE * 0.75);
-    let col = mix(PEACOCK, PEACOCK_DK, Math.min(1, t));
-    // Antialiased droplet.
-    const d = droplet(x, y);
-    const cov = Math.min(1, Math.max(0, 0.5 - d));
+    const sdf = roundedRectSDF(x, y, SIZE / 2, SIZE / 2, half, half, RADIUS);
+    const alpha = clamp01(0.5 - sdf); // antialiased edge
+    // Diagonal peacock gradient.
+    const t = clamp01((x + y) / (2 * SIZE));
+    let col = mix(PEACOCK, PEACOCK_DK, t);
+    const cov = clamp01(0.5 - dropletSDF(x, y));
     col = mix(col, INK, cov);
     raw[p++] = col[0];
     raw[p++] = col[1];
     raw[p++] = col[2];
-    raw[p++] = 0xff;
+    raw[p++] = Math.round(alpha * 255);
   }
-}
-
-function chunk(type, data) {
-  const len = Buffer.alloc(4);
-  len.writeUInt32BE(data.length, 0);
-  const typeBuf = Buffer.from(type, 'latin1');
-  const body = Buffer.concat([typeBuf, data]);
-  const crc = Buffer.alloc(4);
-  crc.writeUInt32BE(crc32(body) >>> 0, 0);
-  return Buffer.concat([len, body, crc]);
 }
 
 function crc32(buf) {
@@ -65,6 +65,14 @@ function crc32(buf) {
     for (let k = 0; k < 8; k++) c = (c >>> 1) ^ (0xedb88320 & -(c & 1));
   }
   return ~c;
+}
+function chunk(type, data) {
+  const len = Buffer.alloc(4);
+  len.writeUInt32BE(data.length, 0);
+  const body = Buffer.concat([Buffer.from(type, 'latin1'), data]);
+  const crc = Buffer.alloc(4);
+  crc.writeUInt32BE(crc32(body) >>> 0, 0);
+  return Buffer.concat([len, body, crc]);
 }
 
 const sig = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);

@@ -41,18 +41,20 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 10px 16px;
+  padding: 0 16px;
   background: var(--chrome);
   -webkit-backdrop-filter: blur(30px) saturate(1.5);
   backdrop-filter: blur(30px) saturate(1.5);
   border: none;
   border-bottom: 1px solid var(--chrome-border);
-  min-height: 52px;
+  /* Height matches the macOS titlebar band so items line up with the traffic
+     lights, which are vertically centered in the same 44px strip. */
+  height: 46px;
 }
 
 /* Reserve room for the macOS traffic lights (overlay titlebar). */
 :root[data-platform='macos'] .toolbar {
-  padding-left: 84px;
+  padding-left: 88px;
 }
 
 .toolbar .brand {
@@ -203,10 +205,18 @@ select:focus-visible,
 .cm-editor.cm-focused {
   outline: none;
 }
-.cm-gutters {
-  background: transparent;
-  border-right: none;
+/* Line-number gutter is fully transparent so it shares the editor's vibrancy. */
+.cm-gutters,
+.cm-gutter,
+.cm-lineNumbers,
+.cm-foldGutter {
+  background: transparent !important;
+  border-right: none !important;
   color: var(--text-muted);
+}
+.cm-activeLineGutter {
+  background: transparent;
+  color: var(--accent);
 }
 .ink-swatch {
   display: inline-block;

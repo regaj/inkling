@@ -46,6 +46,24 @@ describe('compile', () => {
     expect(entity?.fill).toBe(DARK_PALETTE.entityFill);
   });
 
+  it('supports total (double line) and arrow on rel and link in Chen', () => {
+    const binary = compile('entity a "A"\nentity b "B"\nrel r "R" a 1-N b total arrow', {
+      notation: 'chen',
+    });
+    const partEdges = binary.scene.edges.filter((e) => e.id.startsWith('part:'));
+    expect(partEdges.length).toBe(2);
+    expect(partEdges.every((e) => e.double === true)).toBe(true);
+    expect(partEdges.every((e) => e.startCap === 'arrow')).toBe(true);
+
+    const linked = compile(
+      ['entity a "A"', 'rel r "R"', 'link r a N total arrow'].join('\n'),
+      { notation: 'chen' },
+    );
+    const le = linked.scene.edges.find((e) => e.id.startsWith('part:'));
+    expect(le?.double).toBe(true);
+    expect(le?.startCap).toBe('arrow');
+  });
+
   it('Chen renders weak entities and identifying relationships as doubles', () => {
     const src = 'weak w "W"\nentity e "E"\nrel r "R" w N-1 e identifying';
     const r = compile(src, { notation: 'chen' });

@@ -124,6 +124,7 @@ export function renderChenLike(
         edge(`part:${ei++}`, p.entity, r.id, {
           stroke: palette.stroke,
           double: p.total,
+          startCap: p.arrow ? 'arrow' : undefined,
           labelFrom: cardLabel(p.card),
           label: p.role,
         }),

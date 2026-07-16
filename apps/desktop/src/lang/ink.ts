@@ -71,6 +71,7 @@ const FLAGS = new Set([
   'optional',
   'identifying',
   'total',
+  'arrow',
   'role',
   'disjoint',
   'overlapping',

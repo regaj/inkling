@@ -35,14 +35,27 @@ attr audit.seq "seq"  partial  # partial key`}</pre>
       <pre>{`rel owns "Owns" user 1-N account
 rel logs "Logs" user 1-N audit identifying
 
-# n-ary: declare, then link each participant
+# extra markers on the whole relationship:
+rel covers "Covers" audit N-1 site total    # total participation → double line
+rel points "Points" a 1-N b arrow           # arrowhead toward each entity`}</pre>
+      <p>
+        <code>1</code> = one, <code>N</code>/<code>M</code>/<code>*</code> = many, or ranges{' '}
+        (<code>0..1</code>, <code>1..*</code>). Flags after the relationship:{' '}
+        <code>identifying</code> (double diamond, for weak entities), <code>total</code> (double
+        participation line), <code>arrow</code> (arrowheads).
+      </p>
+
+      <h3>n-ary relationships &amp; per-side flags</h3>
+      <pre>{`# declare the relationship, then link each entity — one link per side,
+# so total / arrow / role can differ per participant:
 rel deliver "Deliver"
 link deliver supplier 1
-link deliver product  N
-link deliver project  N total`}</pre>
+link deliver product  N  total       # this side is total
+link deliver project  N  arrow role "for"`}</pre>
       <p>
-        Cardinality: <code>1</code> = one, <code>N</code> = many, or ranges like{' '}
-        <code>0..1</code>, <code>1..*</code>.
+        <code>link &lt;rel&gt; &lt;entity&gt; &lt;card&gt; [role "…"] [total] [arrow]</code> —{' '}
+        <code>total</code> doubles that side's line, <code>arrow</code> adds an arrowhead,{' '}
+        <code>role</code> labels it.
       </p>
 
       <h3>Specialization (ISA)</h3>

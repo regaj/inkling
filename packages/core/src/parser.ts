@@ -215,8 +215,12 @@ function parseRel(tokens: Token[], ast: Statement[], diags: Diagnostic[]): void 
   const label = hasLabel ? labelTok.value : idTok.value;
 
   const rest = tokens.slice(hasLabel ? 3 : 2);
-  const identifying = rest.some((t) => t.value.toLowerCase() === 'identifying');
-  const positional = rest.filter((t) => t.value.toLowerCase() !== 'identifying');
+  const relFlags = flagSet(rest);
+  const identifying = relFlags.has('identifying');
+  const total = relFlags.has('total');
+  const arrow = relFlags.has('arrow');
+  const FLAGS = new Set(['identifying', 'total', 'arrow']);
+  const positional = rest.filter((t) => !FLAGS.has(t.value.toLowerCase()));
 
   // Binary sugar: <A> <cardA>-<cardB> <B>
   if (positional.length >= 3) {
@@ -240,6 +244,8 @@ function parseRel(tokens: Token[], ast: Statement[], diags: Diagnostic[]): void 
       id: idTok.value,
       label,
       identifying,
+      total,
+      arrow,
       binary: { a: aTok.value, b: bTok.value, cardA, cardB },
       pos: tokens[0].pos,
     });
@@ -247,7 +253,7 @@ function parseRel(tokens: Token[], ast: Statement[], diags: Diagnostic[]): void 
   }
 
   // N-ary declaration form
-  ast.push({ type: 'rel', id: idTok.value, label, identifying, pos: tokens[0].pos });
+  ast.push({ type: 'rel', id: idTok.value, label, identifying, total, arrow, pos: tokens[0].pos });
 }
 
 function parseLink(tokens: Token[], ast: Statement[], diags: Diagnostic[]): void {
@@ -263,6 +269,7 @@ function parseLink(tokens: Token[], ast: Statement[], diags: Diagnostic[]): void
   }
   const rest = tokens.slice(4);
   const total = rest.some((t) => t.value.toLowerCase() === 'total');
+  const arrow = rest.some((t) => t.value.toLowerCase() === 'arrow');
   let role: string | undefined;
   const roleIdx = rest.findIndex((t) => t.value.toLowerCase() === 'role');
   if (roleIdx >= 0 && rest[roleIdx + 1] && rest[roleIdx + 1].kind === 'string') {
@@ -275,6 +282,7 @@ function parseLink(tokens: Token[], ast: Statement[], diags: Diagnostic[]): void
     card,
     role,
     total,
+    arrow,
     pos: tokens[0].pos,
   });
 }

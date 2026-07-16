@@ -173,8 +173,8 @@ function emitEdge(e: SceneEdge, boxes: Map<string, SceneNode>, out: SkeletonElem
         strokeWidth: STROKE_WIDTH,
         strokeStyle: e.strokeStyle,
         roughness: ROUGHNESS,
-        startArrowhead: null,
-        endArrowhead: isArrow && e.endCap === 'arrow' ? 'arrow' : null,
+        startArrowhead: e.startCap === 'arrow' ? 'arrow' : null,
+        endArrowhead: e.endCap === 'arrow' ? 'arrow' : null,
       });
     }
   } else {
@@ -191,7 +191,7 @@ function emitEdge(e: SceneEdge, boxes: Map<string, SceneNode>, out: SkeletonElem
       strokeWidth: STROKE_WIDTH,
       strokeStyle: e.strokeStyle,
       roughness: ROUGHNESS,
-      startArrowhead: null,
+      startArrowhead: e.startCap === 'arrow' ? 'arrow' : null,
       endArrowhead: e.endCap === 'arrow' ? 'arrow' : null,
       // Real bindings so the exported .excalidraw stays editable and reflows.
       start: { id: e.from },

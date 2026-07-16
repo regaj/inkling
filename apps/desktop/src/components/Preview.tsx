@@ -1,5 +1,5 @@
 /** Live Excalidraw preview (pan/zoom only). Redraws from the compiled skeleton. */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Excalidraw, convertToExcalidrawElements } from '@excalidraw/excalidraw';
 import type { SkeletonElement } from '@inkling/core';
 
@@ -11,14 +11,10 @@ interface SceneData {
 }
 interface ExcalidrawApi {
   updateScene: (data: SceneData) => void;
+  getSceneElements: () => readonly unknown[];
   scrollToContent: (
     target: unknown,
-    opts: {
-      fitToContent?: boolean;
-      fitToViewport?: boolean;
-      viewportZoomFactor?: number;
-      animate?: boolean;
-    },
+    opts: { fitToContent?: boolean; fitToViewport?: boolean; viewportZoomFactor?: number; animate?: boolean },
   ) => void;
 }
 
@@ -33,6 +29,17 @@ export function Preview({ skeleton, dark, background }: Props): JSX.Element {
   // API becomes available — otherwise the very first (cold-load) scene never
   // paints, because the API is null when the first effect runs.
   const [api, setApi] = useState<ExcalidrawApi | null>(null);
+  const host = useRef<HTMLDivElement>(null);
+
+  // Zoom-to-fit the whole diagram inside the viewport (never larger than 1:1).
+  function fit(a: ExcalidrawApi, elements: readonly unknown[]): void {
+    if (elements.length === 0) return;
+    try {
+      a.scrollToContent(elements, { fitToContent: true, animate: false });
+    } catch (err) {
+      console.error('[inkling] scrollToContent failed', err);
+    }
+  }
 
   useEffect(() => {
     const a = api;
@@ -45,25 +52,22 @@ export function Preview({ skeleton, dark, background }: Props): JSX.Element {
       elements = [];
     }
     a.updateScene({ elements, appState: { viewBackgroundColor: background } });
-    if (elements.length === 0) return;
-    // Two RAFs: let Excalidraw commit the scene before we measure + center it.
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        try {
-          a.scrollToContent(elements, {
-            fitToViewport: true,
-            viewportZoomFactor: 0.85,
-            animate: false,
-          });
-        } catch (err) {
-          console.error('[inkling] scrollToContent failed', err);
-        }
-      });
-    });
+    // Two RAFs: let Excalidraw commit the scene (and size its canvas) first.
+    requestAnimationFrame(() => requestAnimationFrame(() => fit(a, elements)));
   }, [api, skeleton, background]);
 
+  // Re-fit when the preview pane resizes (window resize, help panel toggle).
+  useEffect(() => {
+    const a = api;
+    const el = host.current;
+    if (!a || !el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(() => requestAnimationFrame(() => fit(a, a.getSceneElements())));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [api]);
+
   return (
-    <div className="preview-host">
+    <div className="preview-host" ref={host}>
       <Excalidraw
         excalidrawAPI={(instance) => {
           setApi(instance as unknown as ExcalidrawApi);

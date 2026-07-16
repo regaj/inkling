@@ -159,8 +159,8 @@ export function buildModel(ast: Statement[]): BuildResult {
         validateEntityRef(stmt.binary.a, stmt, `Relationship "${stmt.id}"`);
         validateEntityRef(stmt.binary.b, stmt, `Relationship "${stmt.id}"`);
         rel.participants.push(
-          { entity: stmt.binary.a, card: stmt.binary.cardA, total: false },
-          { entity: stmt.binary.b, card: stmt.binary.cardB, total: false },
+          { entity: stmt.binary.a, card: stmt.binary.cardA, total: stmt.total, arrow: stmt.arrow },
+          { entity: stmt.binary.b, card: stmt.binary.cardB, total: stmt.total, arrow: stmt.arrow },
         );
         break;
       }
@@ -209,6 +209,7 @@ export function buildModel(ast: Statement[]): BuildResult {
           card: stmt.card,
           role: stmt.role,
           total: stmt.total,
+          arrow: stmt.arrow,
         });
         break;
       }

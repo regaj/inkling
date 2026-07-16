@@ -95,46 +95,75 @@ attr site.area      "Area" derived
 
 ### `rel` — a relationship
 
-Two forms.
+A relationship connects entities. It has two forms, and any form can carry
+**flags** that apply to the whole relationship.
 
-**Declared form** — declares a relationship node you then wire up with `link` (use this for n-ary / ternary relationships):
+**Binary sugar** — declares the relationship *and* both participation edges in one line:
 
 ```ink
-rel <id> "Label" [identifying]
+rel <id> "Label" <A> <cardA>-<cardB> <B> [identifying] [total] [arrow]
 ```
 
-**Binary sugar** — declares the relationship *and* both participation links in one line:
+`<cardA>-<cardB>` reads left-to-right: `cardA` is A's cardinality, `cardB` is B's.
+
+**Declared form** — declares just the relationship node; you then wire each side up
+with `link` (use this for n-ary / ternary relationships, or when the two sides need
+different flags):
 
 ```ink
-rel <id> "Label" <A> <cardA>-<cardB> <B> [identifying]
+rel <id> "Label" [identifying] [total] [arrow]
 ```
 
-`identifying` marks an identifying relationship (used to give a weak entity its identity).
+**Relationship flags** (all optional):
+
+| Flag | Effect |
+| --- | --- |
+| `identifying` | An identifying relationship — a **double diamond**. Use it to give a *weak* entity its identity from its owner. |
+| `total` | **Total participation** — every entity instance must take part. Drawn as a **double line** (two parallel strokes). On the binary form it applies to *both* sides. |
+| `arrow` | Draws an **arrowhead** pointing at each entity — handy for functional / directed relationships. On the binary form it applies to *both* sides. |
 
 ```ink
-# binary sugar: engineer (1) inspects (N) site
+# binary sugar: one engineer inspects many sites
 rel inspects "Inspects" engineer 1-N site
 
-# declared form for a ternary / weak-entity relationship
-rel logs "Logs" identifying
+# identifying + total: a weak Audit belongs to exactly one Site, always
+rel covers "Covers" audit N-1 site identifying total
+
+# directed relationship with arrowheads
+rel reports "Reports to" employee N-1 manager arrow
 ```
 
-### `link` — a participation edge
+### `link` — one participation edge
 
-A participation edge from a relationship to an entity. Use with the declared `rel` form to build n-ary relationships.
+`link` adds a **single** participation edge from a declared relationship to an
+entity. Because there is one `link` per side, `total`, `arrow`, and `role` can
+differ per participant — which the binary `rel` form can't express.
 
 ```ink
-link <relId> <entityId> <card> [role "RoleName"] [total]
+link <relId> <entityId> <card> [role "RoleName"] [total] [arrow]
 ```
 
-- `role "..."` — an optional role name on the edge.
-- `total` — total participation (drawn as a double line in Chen).
+- `role "..."` — an optional role name drawn on the edge.
+- `total` — total participation for **this** side (double line).
+- `arrow` — an arrowhead pointing at **this** entity.
 
 ```ink
+# ternary relationship, each side wired separately
+rel deliver "Deliver"
+link deliver supplier 1
+link deliver product  N  total          # products participate totally
+link deliver project  N  arrow role "for"
+
+# a weak entity's identifying relationship, with total participation
 rel logs "Logs" identifying
 link logs audit 1 total
 link logs site  N role "Location"
 ```
+
+> **Note.** `total` and `arrow` render in the Chen family (Chen / Min-Max), where
+> participations are lines you can decorate. In Crow's Foot / UML / IDEF1X the
+> equivalent information is already carried by the crow's-foot / multiplicity
+> markers, so those flags are ignored there.
 
 ---
 

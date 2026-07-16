@@ -31,9 +31,9 @@ export function orderedAttributes(e: Entity): Attribute[] {
 /** The box size needed to fit an entity's header and attribute rows. */
 export function entityBoxSize(e: Entity): { w: number; h: number } {
   const rows = orderedAttributes(e);
-  // Header gets extra slack so the (larger) title never clips; weak entities
-  // also carry a double border that eats a few px.
-  let w = measure(e.label, SIZE.fontLabel) + SIZE.padX * 2 + (e.weak ? 20 : 10);
+  // Header gets extra slack so the (larger) title clears the box edges; weak
+  // entities carry a double border whose inner line would otherwise crowd it.
+  let w = measure(e.label, SIZE.fontLabel) + SIZE.padX * 2 + (e.weak ? 36 : 12);
   for (const a of rows) w = Math.max(w, measure(rowText(a), SIZE.fontRow) + ROW_PAD_X * 2);
   w = Math.max(SIZE.boxMinW, Math.round(w));
   const h = SIZE.headerH + Math.max(1, rows.length) * SIZE.rowH + 14;

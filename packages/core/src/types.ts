@@ -179,6 +179,9 @@ export interface RelStmt {
   id: string;
   label: string;
   identifying: boolean;
+  /** Binary-sugar: `total` doubles both participation lines; `arrow` points both at their entity. */
+  total: boolean;
+  arrow: boolean;
   /** Present for the binary-sugar form; expanded into two links by the model builder. */
   binary?: {
     a: string;
@@ -197,6 +200,7 @@ export interface LinkStmt {
   card: Cardinality;
   role?: string;
   total: boolean;
+  arrow: boolean;
   pos: Pos;
 }
 
@@ -322,7 +326,10 @@ export interface Participation {
   entity: string;
   card: Cardinality;
   role?: string;
+  /** Total participation — drawn as a double line. */
   total: boolean;
+  /** Draw an arrowhead pointing at the entity. */
+  arrow?: boolean;
 }
 
 export interface Relationship {
