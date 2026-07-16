@@ -32,9 +32,8 @@ jobs:
             libxdo-dev \
             build-essential curl wget file libssl-dev
 
+      # pnpm version comes from the "packageManager" field in package.json.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 11
 
       - uses: actions/setup-node@v4
         with:
