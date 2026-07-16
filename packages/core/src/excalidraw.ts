@@ -96,7 +96,9 @@ function emitNode(n: SceneNode, out: SkeletonElement[]): void {
   }
 
   if (n.shape === 'line') {
-    out.push(lineEl(n.id, n.points ?? [], n.stroke, n.strokeStyle));
+    // Decoration lines (underlines, compartment rules) read cleaner crisp than
+    // hand-drawn — thin wobbly strokes look messy and crowd nearby rules.
+    out.push(lineEl(n.id, n.points ?? [], n.stroke, n.strokeStyle, 0));
     return;
   }
 
@@ -337,6 +339,7 @@ function lineEl(
   pts: Array<[number, number]>,
   stroke: string,
   strokeStyle: SkeletonElement['strokeStyle'],
+  roughness: number = ROUGHNESS,
 ): SkeletonElement {
   if (pts.length === 0) {
     return { type: 'line', id, x: 0, y: 0, points: [[0, 0]], strokeColor: stroke };
@@ -352,7 +355,7 @@ function lineEl(
     strokeColor: stroke,
     strokeWidth: STROKE_WIDTH,
     strokeStyle,
-    roughness: ROUGHNESS,
+    roughness,
   };
 }
 

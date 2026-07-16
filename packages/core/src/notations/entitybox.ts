@@ -8,7 +8,7 @@
  */
 import type { Attribute, Entity, SceneNode } from '../types.js';
 import type { Box } from '../geometry.js';
-import { SIZE, lineNode, measure, rectNode } from './shared.js';
+import { SIZE, glyphWidth, lineNode, measure, rectNode } from './shared.js';
 
 const ROW_PAD_X = 18;
 
@@ -93,7 +93,8 @@ export function emitEntityBox(
   rows.forEach((a, idx) => {
     const ry = box.y + SIZE.headerH + idx * SIZE.rowH;
     const text = rowText(a);
-    const tw = measure(text, SIZE.fontRow);
+    // Underline hugs the actual glyphs (glyphWidth), not the padded box measure.
+    const tw = glyphWidth(text, SIZE.fontRow);
     // Each row is bound, centered text in a transparent cell.
     nodes.push(
       rectNode(`row:${e.id}:${a.id}`, { x: box.x, y: ry, w: box.w, h: SIZE.rowH }, {
@@ -107,7 +108,7 @@ export function emitEntityBox(
       }),
     );
     if (a.key || a.partial) {
-      const uy = ry + SIZE.rowH / 2 + SIZE.fontRow * 0.5;
+      const uy = ry + SIZE.rowH / 2 + SIZE.fontRow * 0.42;
       nodes.push(
         lineNode(
           `krule:${e.id}:${a.id}`,

@@ -22,8 +22,8 @@ import {
   fitEllipse,
   fitWidth,
   finalizeScene,
+  glyphWidth,
   lineNode,
-  measure,
   rectNode,
 } from './shared.js';
 import { entityBoxSize, emitEntityBox } from './entitybox.js';
@@ -173,8 +173,8 @@ export function renderChenLike(
 
       // Key attributes are underlined (partial keys dashed).
       if (attr.key || attr.partial) {
-        const tw = Math.min(w - 16, measure(attr.label, SIZE.fontRow));
-        const uy = cy + SIZE.fontRow * 0.62;
+        const tw = Math.min(w - 16, glyphWidth(attr.label, SIZE.fontRow));
+        const uy = cy + SIZE.fontRow * 0.5;
         nodes.push(
           lineNode(
             `ul:${attrId}`,

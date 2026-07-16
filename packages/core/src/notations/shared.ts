@@ -58,6 +58,25 @@ export function measure(text: string, fontSize: number = SIZE.fontLabel): number
   return units * fontSize + fontSize * 0.4;
 }
 
+/**
+ * A *tight* estimate of the actually-rendered text width — matched to the real
+ * font metrics (Excalifont ≈0.46em/char, Amatic Hebrew ≈0.32em, Aref Arabic
+ * ≈0.5em) rather than {@link measure}'s generous box-sizing padding. Use this
+ * for underlines and other decorations that should hug the glyphs.
+ */
+export function glyphWidth(text: string, fontSize: number): number {
+  let units = 0;
+  for (const ch of text) {
+    const c = ch.codePointAt(0) ?? 0;
+    if (ch === ' ') units += 0.26;
+    else if (c >= 0x0590 && c <= 0x05ff) units += 0.32;
+    else if (c >= 0x0600 && c <= 0x08ff) units += 0.5;
+    else if (c >= 0x1100 && c <= 0xd7ff) units += 1.0;
+    else units += 0.5;
+  }
+  return units * fontSize;
+}
+
 /** True if `text` contains any right-to-left characters (Hebrew / Arabic). */
 export function isRtl(text: string): boolean {
   for (const ch of text) {
