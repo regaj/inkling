@@ -109,7 +109,8 @@ export type Statement =
   | PrimitiveShapeStmt
   | PrimitiveConnectorStmt
   | StructureStmt
-  | StructureOpStmt;
+  | StructureOpStmt
+  | IsaStmt;
 
 export interface NotationStmt {
   type: 'notation';
@@ -210,6 +211,19 @@ export interface PrimitiveConnectorStmt {
   label?: string;
   dashed: boolean;
   double: boolean;
+  pos: Pos;
+}
+
+/**
+ * `isa <super> [sub1, sub2, ...] [disjoint|overlapping] [total|partial]` — an
+ * EER specialization / generalization (an ISA hierarchy).
+ */
+export interface IsaStmt {
+  type: 'isa';
+  superclass: string;
+  subclasses: string[];
+  disjoint: boolean;
+  total: boolean;
   pos: Pos;
 }
 
@@ -333,6 +347,19 @@ export interface DataStructure {
   values: string[];
 }
 
+/**
+ * An EER specialization: a superclass entity specialized into subclass entities,
+ * with disjoint/overlapping and total/partial constraints.
+ */
+export interface Specialization {
+  superclass: string;
+  subclasses: string[];
+  /** `true` = disjoint (d), `false` = overlapping (o). */
+  disjoint: boolean;
+  /** `true` = total participation (double line to the superclass). */
+  total: boolean;
+}
+
 /** The fully resolved, notation-independent model. */
 export interface Model {
   notation: NotationName;
@@ -343,6 +370,7 @@ export interface Model {
   primitives: PrimitiveShape[];
   connectors: PrimitiveConnector[];
   structures: DataStructure[];
+  specializations: Specialization[];
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

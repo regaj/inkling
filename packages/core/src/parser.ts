@@ -71,6 +71,8 @@ function parseLine(tokens: Token[], ast: Statement[], diags: Diagnostic[]): void
       return parseRel(tokens, ast, diags);
     case 'link':
       return parseLink(tokens, ast, diags);
+    case 'isa':
+      return parseIsa(tokens, ast, diags);
     case 'rect':
     case 'ellipse':
     case 'diamond':
@@ -344,6 +346,40 @@ function parseConnector(
     label: labelTok?.value,
     dashed: flags.has('dashed'),
     double: flags.has('double'),
+    pos: tokens[0].pos,
+  });
+}
+
+function parseIsa(tokens: Token[], ast: Statement[], diags: Diagnostic[]): void {
+  const superTok = tokens[1];
+  if (!superTok || superTok.kind !== 'word') {
+    return missing(
+      diags,
+      'isa <super> [sub1, sub2] [disjoint|overlapping] [total|partial]',
+      tokens[0],
+    );
+  }
+  const rest = tokens.slice(2);
+  const joined = rest.map((t) => t.value).join(' ');
+  if (!joined.includes('[')) {
+    return diag(
+      diags,
+      'missing-argument',
+      'isa needs a bracketed subclass list, e.g. isa audit [passed, failed]',
+      superTok,
+    );
+  }
+  const subclasses = parseValueList(rest);
+  if (subclasses.length === 0) {
+    return diag(diags, 'missing-argument', 'isa needs at least one subclass', superTok);
+  }
+  const flags = flagSet(rest);
+  ast.push({
+    type: 'isa',
+    superclass: superTok.value,
+    subclasses,
+    disjoint: !flags.has('overlapping'),
+    total: flags.has('total'),
     pos: tokens[0].pos,
   });
 }

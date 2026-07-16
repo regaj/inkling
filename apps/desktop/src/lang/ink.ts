@@ -40,6 +40,7 @@ const COMMANDS = [
   'attr',
   'rel',
   'link',
+  'isa',
   'rect',
   'ellipse',
   'diamond',
@@ -69,6 +70,8 @@ const FLAGS = new Set([
   'identifying',
   'total',
   'role',
+  'disjoint',
+  'overlapping',
 ]);
 
 interface InkState {
@@ -286,7 +289,7 @@ function inkCompletions(ctx: CompletionContext): CompletionResult | null {
       })),
     };
   }
-  if (['arrow', 'line', 'link', 'rel'].includes(cmd)) {
+  if (['arrow', 'line', 'link', 'rel', 'isa'].includes(cmd)) {
     return {
       from,
       options: declaredIds(ctx.state.doc.toString()).map((label) => ({ label, type: 'variable' })),

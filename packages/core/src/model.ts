@@ -44,6 +44,7 @@ export function buildModel(ast: Statement[]): BuildResult {
     primitives: [],
     connectors: [],
     structures: [],
+    specializations: [],
   };
 
   // Track the declaration namespace shared by connector references.
@@ -201,6 +202,17 @@ export function buildModel(ast: Statement[]): BuildResult {
           entity: stmt.entity,
           card: stmt.card,
           role: stmt.role,
+          total: stmt.total,
+        });
+        break;
+      }
+      case 'isa': {
+        validateEntityRef(stmt.superclass, stmt, 'isa superclass');
+        for (const sub of stmt.subclasses) validateEntityRef(sub, stmt, 'isa subclass');
+        model.specializations.push({
+          superclass: stmt.superclass,
+          subclasses: [...stmt.subclasses],
+          disjoint: stmt.disjoint,
           total: stmt.total,
         });
         break;

@@ -10,6 +10,7 @@ from the CLI, then switch notations to compare how the same model renders.
 | [`university-ternary.ink`](university-ternary.ink) | An n-ary (ternary) relationship via the `link` form, plus a relationship attribute. |
 | [`flowchart.ink`](flowchart.ink) | A flowchart from primitives, auto-laid-out by `direction` (TB/BT/LR/RL). |
 | [`data-structures.ink`](data-structures.ink) | Array, stack, queue, and linked list with live `push`/`pop`/`enqueue`/`dequeue`/`append`. |
+| [`specialization.ink`](specialization.ink) | An EER ISA hierarchy (disjoint, total) with the `d`/`o` circle and subset lines. |
 
 ```sh
 # render one from the CLI

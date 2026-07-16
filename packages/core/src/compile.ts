@@ -7,7 +7,7 @@
  */
 import { parse } from './parser.js';
 import { buildModel } from './model.js';
-import { getNotation } from './notations/index.js';
+import { getNotation, registerBuiltinNotations } from './notations/index.js';
 import { LIGHT_PALETTE } from './palette.js';
 import { DEFAULT_NOTATION } from './types.js';
 import type { CompileOptions, CompileResult, Model, NotationName, Scene } from './types.js';
@@ -38,6 +38,8 @@ export function compile(source: string, options: CompileOptions = {}): CompileRe
 
 /** Render an already-built {@link Model} in a given notation. */
 export function renderScene(model: Model, notation: NotationName, palette: Palette): Scene {
+  // Ensure built-ins are registered even if import side effects were tree-shaken.
+  registerBuiltinNotations();
   const renderer = getNotation(notation) ?? getNotation(DEFAULT_NOTATION)!;
   return renderer({ ...model, notation }, palette);
 }

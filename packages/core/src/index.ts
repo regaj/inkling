@@ -23,6 +23,7 @@ export type { SkeletonElement } from './excalidraw.js';
 // Registries
 export {
   registerNotation,
+  registerBuiltinNotations,
   getNotation,
   listNotations,
 } from './notations/index.js';
@@ -80,6 +81,7 @@ export type {
   Participation,
   PrimitiveShape,
   PrimitiveConnector,
+  Specialization,
   Scene,
   SceneNode,
   SceneEdge,

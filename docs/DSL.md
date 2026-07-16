@@ -164,6 +164,29 @@ Use bare `1` / `N` for the common cases and explicit ranges (`0..1`, `1..*`, …
 
 ---
 
+## Specialization (ISA)
+
+Model an EER specialization / generalization hierarchy — a superclass entity and
+its subclass entities:
+
+```ink
+entity audit  "Audit"
+entity passed "Passed Audit"
+entity failed "Failed Audit"
+attr failed.hazards "hazards"
+
+isa audit [passed, failed] disjoint total
+```
+
+`isa <super> [sub1, sub2, …] [disjoint|overlapping] [total|partial]`
+
+- **disjoint** (default) draws a `d` circle; **overlapping** draws `o`.
+- **total** draws a *double* line to the superclass (every superclass instance belongs to a subclass); **partial** (default) a single line.
+- Each subclass line is marked with a subset symbol (`⊂`).
+- The superclass and subclasses must be declared entities. Works in every notation.
+
+---
+
 ## Primitive (escape-hatch) statements
 
 Primitives are free-form and notation-independent — they render exactly as written, regardless of the active notation. Use them for annotations, legends, or diagrams the ER model doesn't cover.

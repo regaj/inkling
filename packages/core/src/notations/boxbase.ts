@@ -33,6 +33,11 @@ import {
   textNode,
 } from './shared.js';
 import { appendPrimitives } from './primitives.js';
+import {
+  specializationLayoutNodes,
+  specializationLayoutEdges,
+  renderSpecializations,
+} from './specialization.js';
 
 export interface BoxConfig {
   notation: NotationName;
@@ -84,6 +89,9 @@ export function renderBoxNotation(model: Model, palette: Palette, config: BoxCon
   }
 
   // ── Layout ─────────────────────────────────────────────────────────────────
+  for (const n of specializationLayoutNodes(model)) {
+    boxOf.set(n.id, { x: 0, y: 0, w: n.w, h: n.h });
+  }
   const layoutNodes = [...boxOf.entries()].map(([id, b]) => ({ id, w: b.w, h: b.h }));
   const layoutEdges: Array<[string, string]> = [];
   for (const r of model.relationships) {
@@ -93,6 +101,7 @@ export function renderBoxNotation(model: Model, palette: Palette, config: BoxCon
       for (const p of r.participants) layoutEdges.push([`reln:${r.id}`, p.entity]);
     }
   }
+  layoutEdges.push(...specializationLayoutEdges(model));
   const positions = layered(layoutNodes, layoutEdges, {
     direction: model.direction,
     gapMain: SIZE.gapMain,
@@ -229,6 +238,7 @@ export function renderBoxNotation(model: Model, palette: Palette, config: BoxCon
     }
   }
 
+  renderSpecializations(model, palette, boxOf, nodes, edges);
   appendPrimitives(model, palette, nodes, edges);
   return finalizeScene(config.notation, model.title, nodes, edges);
 }

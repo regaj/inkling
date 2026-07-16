@@ -25,6 +25,11 @@ import {
   rectNode,
 } from './shared.js';
 import { appendPrimitives } from './primitives.js';
+import {
+  specializationLayoutNodes,
+  specializationLayoutEdges,
+  renderSpecializations,
+} from './specialization.js';
 
 export function renderChen(model: Model, palette: Palette): Scene {
   return renderChenLike(model, palette, 'chen', chenLabel);
@@ -51,12 +56,16 @@ export function renderChenLike(
   for (const r of model.relationships) {
     boxOf.set(r.id, { x: 0, y: 0, w: fitWidth(r.label, SIZE.diamondW), h: SIZE.diamondH });
   }
+  for (const n of specializationLayoutNodes(model)) {
+    boxOf.set(n.id, { x: 0, y: 0, w: n.w, h: n.h });
+  }
 
   const layoutNodes = [...boxOf.entries()].map(([id, b]) => ({ id, w: b.w, h: b.h }));
   const layoutEdges: Array<[string, string]> = [];
   for (const r of model.relationships) {
     for (const p of r.participants) layoutEdges.push([r.id, p.entity]);
   }
+  layoutEdges.push(...specializationLayoutEdges(model));
   const positions = layered(layoutNodes, layoutEdges, {
     direction: model.direction,
     gapMain: SIZE.gapMain + 60,
@@ -162,6 +171,7 @@ export function renderChenLike(
     });
   }
 
+  renderSpecializations(model, palette, boxOf, nodes, edges);
   appendPrimitives(model, palette, nodes, edges);
   return finalizeScene(notation, model.title, nodes, edges);
 }

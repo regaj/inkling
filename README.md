@@ -28,6 +28,7 @@ Built with **Tauri v2 + Vite + React + TypeScript**, using **CodeMirror 6** as t
 - **Compact, readable DSL.** One statement per line, case-insensitive keywords, `#` comments. Semantic ER statements (`entity`, `weak`, `attr`, `rel`, `link`) plus raw primitives (`rect`, `ellipse`, `diamond`, `text`, `arrow`, `line`).
 - **Flowcharts.** Connect primitives with arrows and set `direction` (`TB` / `BT` / `LR` / `RL`); coordless shapes auto-layout along the flow.
 - **Data structures.** `array`, `stack`, `queue`, and `linked_list` draw real shapes — with `push` / `pop` / `enqueue` / `dequeue` / `append` operations that update the drawing live.
+- **EER specialization.** `isa <super> [sub1, sub2] disjoint total` draws an ISA hierarchy with the `d`/`o` circle, total/partial line, and subset markers.
 - **Theme-aware, multi-format export.** `.excalidraw` (re-editable), SVG, PNG (@1x/@2x/@3x), JPG, PDF (vector with raster fallback), and copy-to-clipboard (PNG + SVG). Exported artifacts carry their own light/dark and background settings, independent of the editor theme.
 - **Headless CLI.** Render `.ink` files to images from the command line — great for CI, docs pipelines, and batch jobs.
 - **Native and cross-platform.** macOS, Windows, and Linux, with platform-appropriate window effects (macOS vibrancy, Windows Mica/Acrylic, Linux opaque fallback).

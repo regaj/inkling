@@ -43,6 +43,20 @@ link deliver project  N total`}</pre>
         <code>0..1</code>, <code>1..*</code>.
       </p>
 
+      <h3>Specialization (ISA)</h3>
+      <pre>{`entity audit  "Audit"
+entity passed "Passed Audit"
+entity failed "Failed Audit"
+attr failed.hazards "hazards"
+
+# super -> subclasses, with constraints
+isa audit [passed, failed] disjoint total`}</pre>
+      <p>
+        Draws an EER circle — <code>d</code> disjoint / <code>o</code> overlapping — with a
+        double line to the superclass when <code>total</code> (else <code>partial</code>), and
+        a <code>⊂</code> on each subclass.
+      </p>
+
       <h3>Chen mapping</h3>
       <p>
         entity → rectangle · relationship → diamond · attribute → ellipse · weak /
