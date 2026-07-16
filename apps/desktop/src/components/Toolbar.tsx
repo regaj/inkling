@@ -22,7 +22,13 @@ export function Toolbar(props: Props): JSX.Element {
   return (
     <header className="toolbar" data-tauri-drag-region>
       <div className="brand" data-tauri-drag-region>
-        <span className="drop" aria-hidden />
+        <svg className="brand-drop" viewBox="0 0 24 24" aria-hidden width="20" height="20">
+          <path
+            d="M12 2s-7 9-7 13.5a7 7 0 1 0 14 0C19 11 12 2 12 2Z"
+            fill="var(--accent)"
+          />
+          <ellipse cx="9.4" cy="15.2" rx="1.7" ry="2.5" fill="rgba(255,255,255,0.4)" />
+        </svg>
         {APP_NAME}
       </div>
 

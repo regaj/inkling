@@ -59,6 +59,7 @@ export { SAMPLE_INK } from './sample.js';
 export {
   NOTATIONS,
   DEFAULT_NOTATION,
+  DEFAULT_ATTR_STYLE,
   DIRECTIONS,
   STRUCTURE_KINDS,
 } from './types.js';
@@ -66,6 +67,7 @@ export type {
   NotationName,
   NotationRenderer,
   Direction,
+  AttrStyle,
   StructureKind,
   StructureOp,
   DataStructure,

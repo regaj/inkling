@@ -57,6 +57,15 @@ export const NOTATIONS: readonly NotationName[] = [
 export const DEFAULT_NOTATION: NotationName = 'chen';
 
 /**
+ * How entity attributes are drawn: `box` lists them inside the entity's box
+ * (the default — compact and clip-free); `ellipse` draws classic Chen satellite
+ * ellipses. Only affects the Chen-family notations.
+ */
+export type AttrStyle = 'box' | 'ellipse';
+
+export const DEFAULT_ATTR_STYLE: AttrStyle = 'box';
+
+/**
  * Layout flow direction — used by the ER graph layout and by flowcharts built
  * from primitives. `LR` left→right, `RL` right→left, `TB` top→bottom, `BT`
  * bottom→top.
@@ -102,6 +111,7 @@ export type Statement =
   | NotationStmt
   | TitleStmt
   | DirectionStmt
+  | AttrStyleStmt
   | EntityStmt
   | AttrStmt
   | RelStmt
@@ -127,6 +137,13 @@ export interface TitleStmt {
 export interface DirectionStmt {
   type: 'direction';
   direction: Direction;
+  pos: Pos;
+}
+
+/** `attrs box|ellipse` (alias `attributes`). */
+export interface AttrStyleStmt {
+  type: 'attrstyle';
+  style: AttrStyle;
   pos: Pos;
 }
 
@@ -364,6 +381,7 @@ export interface Specialization {
 export interface Model {
   notation: NotationName;
   direction: Direction;
+  attrStyle: AttrStyle;
   title?: string;
   entities: Entity[];
   relationships: Relationship[];

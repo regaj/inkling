@@ -36,14 +36,14 @@ export const SIZE = {
 } as const;
 
 /**
- * Estimate the rendered width of `text` at `fontSize`. Excalifont is roughly
- * 0.55em average advance; this is deliberately generous so labels never clip.
+ * Estimate the rendered width of `text` at `fontSize`. Excalifont runs wide, so
+ * this is deliberately generous — better an oversized shape than clipped text.
  */
 export function measure(text: string, fontSize: number = SIZE.fontLabel): number {
-  return text.length * fontSize * 0.58;
+  return text.length * fontSize * 0.64;
 }
 
-/** Width that comfortably fits `label`, clamped to a minimum. */
+/** Width that comfortably fits `label` on one line, clamped to a minimum. */
 export function fitWidth(
   label: string,
   min: number,
@@ -51,6 +51,28 @@ export function fitWidth(
   padX: number = SIZE.padX,
 ): number {
   return Math.max(min, Math.round(measure(label, fontSize) + padX * 2));
+}
+
+/**
+ * Size a diamond so its bound label fits. Excalidraw wraps bound text to the
+ * shape's *inscribed* rectangle — roughly half the width for a diamond — so a
+ * diamond must be ~2× as wide as the text to keep it on one line.
+ */
+export function fitDiamond(label: string, fontSize: number = SIZE.fontLabel): { w: number; h: number } {
+  const t = measure(label, fontSize);
+  const w = Math.max(SIZE.diamondW, Math.min(340, Math.round(t * 1.9 + 44)));
+  // Two-line headroom when a long label had to be clamped.
+  const h = t * 1.9 + 44 > 340 ? 108 : SIZE.diamondH;
+  return { w, h };
+}
+
+/**
+ * Size an ellipse so its bound label fits. The inscribed rectangle of an ellipse
+ * is ~1/√2 of its bounds, so the ellipse must be ~1.5× the text width.
+ */
+export function fitEllipse(label: string, fontSize: number = SIZE.fontRow): { w: number; h: number } {
+  const t = measure(label, fontSize);
+  return { w: Math.max(SIZE.attrW, Math.round(t * 1.5 + 24)), h: SIZE.attrH };
 }
 
 export interface NodeOpts {

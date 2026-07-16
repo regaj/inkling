@@ -59,4 +59,17 @@ describe('compile', () => {
     expect(r.scene.nodes.find((n) => n.id === 'u')?.role).toBe('entity-box');
     expect(r.scene.nodes.some((n) => n.id === 'row:u:name')).toBe(true);
   });
+
+  it('Chen boxes attributes by default and fans ellipses with `attrs ellipse`', () => {
+    const src = 'entity u "User"\nattr u.name "name"';
+    const boxed = compile(src, { notation: 'chen' });
+    expect(boxed.model.attrStyle).toBe('box');
+    expect(boxed.scene.nodes.find((n) => n.id === 'u')?.role).toBe('entity-box');
+    expect(boxed.scene.nodes.some((n) => n.id === 'row:u:name')).toBe(true);
+    expect(boxed.scene.nodes.some((n) => n.id === 'attr:u:name')).toBe(false);
+
+    const ellipse = compile(`attrs ellipse\n${src}`, { notation: 'chen' });
+    expect(ellipse.model.attrStyle).toBe('ellipse');
+    expect(ellipse.scene.nodes.find((n) => n.id === 'attr:u:name')?.shape).toBe('ellipse');
+  });
 });

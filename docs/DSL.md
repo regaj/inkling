@@ -32,6 +32,7 @@ Directives configure the whole document. Put them at the top by convention.
 | `notation <name>` | `chen`, `crowsfoot`, `uml`, `idef1x`, `minmax` | `chen` | The notation used to render the semantic model. The app's notation picker overrides this live. |
 | `title "..."` | any label | — | An optional document/export title. It is metadata, not drawn on the canvas. |
 | `direction <dir>` | `LR`, `RL`, `TB`, `BT` | `LR` | Auto-layout flow direction — left→right, right→left, top→bottom, bottom→top. Applies to ER graphs, flowcharts, and the layered layout in general. |
+| `attrs <style>` (alias `attributes`) | `box`, `ellipse` | `box` | How Chen-family notations draw attributes: `box` lists them inside the entity box (compact); `ellipse` draws classic satellite ellipses (with key underline, dashed for derived, double for multivalued). |
 
 ```ink
 notation chen

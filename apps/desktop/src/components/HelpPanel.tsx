@@ -26,7 +26,9 @@ attr user.tags "tags" multi    # multivalued
 attr audit.seq "seq"  partial  # partial key`}</pre>
       <p>
         Flags: <code>key</code>, <code>partial</code>, <code>derived</code>, <code>multi</code>,{' '}
-        <code>optional</code>.
+        <code>optional</code>. By default attributes are listed inside the entity box; add{' '}
+        <code>attrs ellipse</code> at the top for classic Chen satellite ellipses (
+        <code>attrs box</code> switches back).
       </p>
 
       <h3>Relationships</h3>
@@ -95,10 +97,19 @@ arrow b -> d "no"`}</pre>
         <code>RL</code> right→left. Same for ER diagrams.
       </p>
 
+      <h3>Arrows &amp; connectors</h3>
+      <pre>{`arrow a -> b "label"   # directed, with arrowhead
+arrow a -> b dashed    # dashed
+line  a -- b           # undirected`}</pre>
+      <p>
+        Endpoints can be any declared id — primitives <em>or</em> entities (e.g.{' '}
+        <code>arrow engineer -&gt; site</code>). They attach to shape borders automatically.
+      </p>
+
       <h3>Free-form primitives</h3>
       <pre>{`rect  a "A" @40,40 160x64 fill=#e5ffd6 double
-arrow a -> b "label" dashed
-line  a -- b`}</pre>
+ellipse hub "Hub" @300,120
+text  note "Draft" @40,300 size=14`}</pre>
       <p>Primitives render as-is in every notation.</p>
 
       <p style={{ marginTop: 16 }}>

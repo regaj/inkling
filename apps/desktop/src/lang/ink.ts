@@ -35,6 +35,8 @@ const COMMANDS = [
   'notation',
   'title',
   'direction',
+  'attrs',
+  'attributes',
   'entity',
   'weak',
   'attr',
@@ -277,6 +279,9 @@ function inkCompletions(ctx: CompletionContext): CompletionResult | null {
   }
   if (cmd === 'direction') {
     return { from, options: ['LR', 'RL', 'TB', 'BT'].map((label) => ({ label, type: 'enum' })) };
+  }
+  if (cmd === 'attrs' || cmd === 'attributes') {
+    return { from, options: ['box', 'ellipse'].map((label) => ({ label, type: 'enum' })) };
   }
   if (STRUCTURE_OPS.has(cmd)) {
     // Suggest ids of declared data structures.

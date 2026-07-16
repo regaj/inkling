@@ -61,6 +61,9 @@ function parseLine(tokens: Token[], ast: Statement[], diags: Diagnostic[]): void
       return parseTitle(tokens, ast, diags);
     case 'direction':
       return parseDirection(tokens, ast, diags);
+    case 'attrs':
+    case 'attributes':
+      return parseAttrStyle(tokens, ast, diags);
     case 'entity':
       return parseEntity(tokens, ast, diags, false);
     case 'weak':
@@ -137,6 +140,16 @@ function parseDirection(tokens: Token[], ast: Statement[], diags: Diagnostic[]):
     );
   }
   ast.push({ type: 'direction', direction: dir as Direction, pos: tokens[0].pos });
+}
+
+function parseAttrStyle(tokens: Token[], ast: Statement[], diags: Diagnostic[]): void {
+  const arg = tokens[1];
+  if (!arg) return missing(diags, 'attrs <box|ellipse>', tokens[0]);
+  const style = arg.value.toLowerCase();
+  if (style !== 'box' && style !== 'ellipse') {
+    return diag(diags, 'syntax', `attrs must be "box" or "ellipse", got "${arg.value}"`, arg);
+  }
+  ast.push({ type: 'attrstyle', style, pos: tokens[0].pos });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

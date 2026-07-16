@@ -117,8 +117,9 @@ function emitNode(n: SceneNode, out: SkeletonElement[]): void {
   out.push(el);
 
   // Double border → inset second outline (weak entity / identifying rel / multivalued attr).
+  // Diamonds converge to points, so they need a larger inset to read as two lines.
   if (n.double) {
-    const inset = 5;
+    const inset = n.shape === 'diamond' ? 10 : 7;
     out.push({
       type: n.shape,
       id: `${n.id}__inner`,
@@ -147,44 +148,46 @@ function emitEdge(e: SceneEdge, boxes: Map<string, SceneNode>, out: SkeletonElem
   const p1 = borderPoint(from, from.shape, toCenter);
   const p2 = borderPoint(to, to.shape, fromCenter);
 
-  const isArrow = e.endCap === 'arrow' || e.startCap === 'arrow';
-  const connector: SkeletonElement = {
-    type: isArrow ? 'arrow' : 'line',
-    x: p1.x,
-    y: p1.y,
-    points: [
-      [0, 0],
-      [p2.x - p1.x, p2.y - p1.y],
-    ],
-    strokeColor: e.stroke,
-    strokeWidth: STROKE_WIDTH,
-    strokeStyle: e.strokeStyle,
-    roughness: ROUGHNESS,
-    startArrowhead: null,
-    endArrowhead: e.endCap === 'arrow' ? 'arrow' : null,
-    // Real bindings so the exported .excalidraw stays editable and reflows.
-    start: { id: e.from },
-    end: { id: e.to },
-  };
-  out.push(connector);
-
-  // Double / total-participation line → a parallel offset stroke.
   if (e.double) {
+    // Total-participation / double relationship line → two clearly separated
+    // parallel strokes (≈9px apart), drawn explicitly so they read as two lines.
     const theta = angle(p1, p2);
-    const o1 = perp(p1, theta, 4);
-    const o2 = perp(p2, theta, 4);
-    out.push(lineEl(`${e.id}__dbl`, [
-      [o1.x, o1.y],
-      [o2.x, o2.y],
-    ], e.stroke, e.strokeStyle));
-  }
+    for (const off of [-4.5, 4.5]) {
+      const a = perp(p1, theta, off);
+      const b = perp(p2, theta, off);
+      out.push(lineEl(`${e.id}__d${off}`, [
+        [a.x, a.y],
+        [b.x, b.y],
+      ], e.stroke, e.strokeStyle));
+    }
+  } else {
+    const isArrow = e.endCap === 'arrow' || e.startCap === 'arrow';
+    out.push({
+      type: isArrow ? 'arrow' : 'line',
+      x: p1.x,
+      y: p1.y,
+      points: [
+        [0, 0],
+        [p2.x - p1.x, p2.y - p1.y],
+      ],
+      strokeColor: e.stroke,
+      strokeWidth: STROKE_WIDTH,
+      strokeStyle: e.strokeStyle,
+      roughness: ROUGHNESS,
+      startArrowhead: null,
+      endArrowhead: e.endCap === 'arrow' ? 'arrow' : null,
+      // Real bindings so the exported .excalidraw stays editable and reflows.
+      start: { id: e.from },
+      end: { id: e.to },
+    });
 
-  // End markers (crow's foot / IDEF1X). 'arrow' is handled by the arrowhead above.
-  if (e.startCap && e.startCap !== 'arrow' && e.startCap !== 'none') {
-    emitCap(e.startCap, p1, angle(p1, p2), `${e.id}__sc`, e.stroke, out);
-  }
-  if (e.endCap && e.endCap !== 'arrow' && e.endCap !== 'none') {
-    emitCap(e.endCap, p2, angle(p2, p1), `${e.id}__ec`, e.stroke, out);
+    // End markers (crow's foot / IDEF1X). 'arrow' is the arrowhead above.
+    if (e.startCap && e.startCap !== 'arrow' && e.startCap !== 'none') {
+      emitCap(e.startCap, p1, angle(p1, p2), `${e.id}__sc`, e.stroke, out);
+    }
+    if (e.endCap && e.endCap !== 'arrow' && e.endCap !== 'none') {
+      emitCap(e.endCap, p2, angle(p2, p1), `${e.id}__ec`, e.stroke, out);
+    }
   }
 
   // Labels.

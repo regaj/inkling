@@ -18,12 +18,15 @@ import {
   diamondNode,
   edge,
   ellipseNode,
+  fitDiamond,
+  fitEllipse,
   fitWidth,
   finalizeScene,
   lineNode,
   measure,
   rectNode,
 } from './shared.js';
+import { entityBoxSize, emitEntityBox } from './entitybox.js';
 import { appendPrimitives } from './primitives.js';
 import {
   specializationLayoutNodes,
@@ -47,14 +50,20 @@ export function renderChenLike(
 ): Scene {
   const nodes: SceneNode[] = [];
   const edges: SceneEdge[] = [];
+  // Boxed attributes (the default) list them inside the entity box; the classic
+  // `attrs ellipse` style fans them out as satellite ellipses.
+  const boxed = model.attrStyle === 'box';
 
   // ── Size and lay out the entity/relationship graph ─────────────────────────
   const boxOf = new Map<string, Box>();
   for (const e of model.entities) {
-    boxOf.set(e.id, { x: 0, y: 0, w: fitWidth(e.label, SIZE.entityW), h: SIZE.entityH });
+    const size = boxed
+      ? entityBoxSize(e)
+      : { w: fitWidth(e.label, SIZE.entityW), h: SIZE.entityH };
+    boxOf.set(e.id, { x: 0, y: 0, ...size });
   }
   for (const r of model.relationships) {
-    boxOf.set(r.id, { x: 0, y: 0, w: fitWidth(r.label, SIZE.diamondW), h: SIZE.diamondH });
+    boxOf.set(r.id, { x: 0, y: 0, ...fitDiamond(r.label) });
   }
   for (const n of specializationLayoutNodes(model)) {
     boxOf.set(n.id, { x: 0, y: 0, w: n.w, h: n.h });
@@ -81,15 +90,19 @@ export function renderChenLike(
 
   // ── Entity + relationship nodes ────────────────────────────────────────────
   for (const e of model.entities) {
-    nodes.push(
-      rectNode(e.id, boxOf.get(e.id)!, {
-        role: e.weak ? 'weak-entity' : 'entity',
-        label: e.label,
-        stroke: e.weak ? palette.weak : palette.stroke,
-        fill: palette.entityFill,
-        double: e.weak,
-      }),
-    );
+    if (boxed) {
+      emitEntityBox(e, boxOf.get(e.id)!, palette, nodes, { double: e.weak });
+    } else {
+      nodes.push(
+        rectNode(e.id, boxOf.get(e.id)!, {
+          role: e.weak ? 'weak-entity' : 'entity',
+          label: e.label,
+          stroke: e.weak ? palette.weak : palette.stroke,
+          fill: palette.entityFill,
+          double: e.weak,
+        }),
+      );
+    }
   }
   for (const r of model.relationships) {
     nodes.push(
@@ -119,10 +132,14 @@ export function renderChenLike(
   }
 
   // ── Attributes as satellite ellipses ───────────────────────────────────────
-  const owners = [
-    ...model.entities.map((e) => ({ id: e.id, attrs: e.attributes, prefer: -Math.PI / 2 })),
-    ...model.relationships.map((r) => ({ id: r.id, attrs: r.attributes, prefer: Math.PI / 2 })),
-  ];
+  // In boxed mode, entity attributes live inside the box; only relationship
+  // attributes (which can't be boxed on a diamond) fan out as satellites.
+  const owners = boxed
+    ? model.relationships.map((r) => ({ id: r.id, attrs: r.attributes, prefer: Math.PI / 2 }))
+    : [
+        ...model.entities.map((e) => ({ id: e.id, attrs: e.attributes, prefer: -Math.PI / 2 })),
+        ...model.relationships.map((r) => ({ id: r.id, attrs: r.attributes, prefer: Math.PI / 2 })),
+      ];
   for (const owner of owners) {
     if (owner.attrs.length === 0) continue;
     const ownerBox = boxOf.get(owner.id)!;
@@ -137,8 +154,8 @@ export function renderChenLike(
       const theta = start + step * i;
       const cx = c.x + Math.cos(theta) * radius;
       const cy = c.y + Math.sin(theta) * radius;
-      const w = fitWidth(attr.label, SIZE.attrW, SIZE.fontRow);
-      const box = { x: cx - w / 2, y: cy - SIZE.attrH / 2, w, h: SIZE.attrH };
+      const { w, h } = fitEllipse(attr.label, SIZE.fontRow);
+      const box = { x: cx - w / 2, y: cy - h / 2, w, h };
       const attrId = `attr:${owner.id}:${attr.id}`;
       nodes.push(
         ellipseNode(attrId, box, {

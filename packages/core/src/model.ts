@@ -9,6 +9,7 @@
  */
 import type {
   Attribute,
+  AttrStyle,
   DataStructure,
   Diagnostic,
   Direction,
@@ -18,7 +19,7 @@ import type {
   Relationship,
   Statement,
 } from './types.js';
-import { DEFAULT_NOTATION } from './types.js';
+import { DEFAULT_ATTR_STYLE, DEFAULT_NOTATION } from './types.js';
 
 export interface BuildResult {
   model: Model;
@@ -30,6 +31,7 @@ export function buildModel(ast: Statement[]): BuildResult {
 
   let notation: NotationName = DEFAULT_NOTATION;
   let direction: Direction = 'LR';
+  let attrStyle: AttrStyle = DEFAULT_ATTR_STYLE;
   let title: string | undefined;
 
   const entities = new Map<string, Entity>();
@@ -41,6 +43,7 @@ export function buildModel(ast: Statement[]): BuildResult {
     title,
     entities: [],
     relationships: [],
+    attrStyle,
     primitives: [],
     connectors: [],
     structures: [],
@@ -71,6 +74,9 @@ export function buildModel(ast: Statement[]): BuildResult {
         break;
       case 'direction':
         direction = stmt.direction;
+        break;
+      case 'attrstyle':
+        attrStyle = stmt.style;
         break;
       case 'title':
         title = stmt.title;
@@ -275,6 +281,7 @@ export function buildModel(ast: Statement[]): BuildResult {
 
   model.notation = notation;
   model.direction = direction;
+  model.attrStyle = attrStyle;
   model.title = title;
   model.entities = [...entities.values()];
   model.relationships = [...relationships.values()];

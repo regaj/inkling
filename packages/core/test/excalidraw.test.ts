@@ -3,12 +3,25 @@ import { compile } from '../src/compile.js';
 import { toExcalidrawSkeleton, wrapExcalidrawFile } from '../src/excalidraw.js';
 
 describe('toExcalidrawSkeleton — golden structure', () => {
-  it('emits bound-text labels on entities', () => {
+  it('labels boxed entities with a header text node', () => {
     const { scene } = compile('entity user "User"', { notation: 'chen' });
     const els = toExcalidrawSkeleton(scene);
-    const rect = els.find((e) => e.id === 'user');
-    expect(rect?.type).toBe('rectangle');
-    expect(rect?.label?.text).toBe('User');
+    expect(els.find((e) => e.id === 'user')?.type).toBe('rectangle');
+    expect(els.find((e) => e.id === 'hdr:user')?.text).toBe('User');
+  });
+
+  it('emits bound-text labels on relationship diamonds and classic ellipse attrs', () => {
+    const src = 'entity a "A"\nentity b "B"\nrel r "R" a 1-N b';
+    const els = toExcalidrawSkeleton(compile(src, { notation: 'chen' }).scene);
+    const diamond = els.find((e) => e.id === 'r');
+    expect(diamond?.type).toBe('diamond');
+    expect(diamond?.label?.text).toBe('R');
+
+    // In classic ellipse mode, attributes are bound-text ellipses.
+    const ell = toExcalidrawSkeleton(
+      compile('attrs ellipse\nentity a "A"\nattr a.x "X"', { notation: 'chen' }).scene,
+    );
+    expect(ell.find((e) => e.id === 'attr:a:x')?.label?.text).toBe('X');
   });
 
   it('emits arrows with real start/end bindings for participation edges', () => {

@@ -30,4 +30,6 @@ export async function initWindowEffects(): Promise<void> {
   const os = await detectOS();
   const translucent = os === 'macos' || os === 'windows';
   document.documentElement.classList.toggle('no-window-effects', !translucent);
+  // Expose the platform so CSS can reserve room for macOS traffic lights.
+  document.documentElement.dataset.platform = os;
 }
