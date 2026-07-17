@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "app:install": "tauri build && bash ../../scripts/install-macos.sh"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.18.1",

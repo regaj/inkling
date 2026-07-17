@@ -145,6 +145,16 @@ Outputs:
 - **Windows** — `.msi` and NSIS `.exe`
 - **Linux** — `.deb` and `.AppImage`
 
+On macOS, build **and** install to `/Applications` in one step:
+
+```sh
+pnpm --filter @inkling/desktop app:install
+```
+
+This replaces any older `/Applications/Inkling.app` with the build you just made
+and clears the bundler's leftovers, so there's exactly one Inkling and Spotlight
+never launches a stale binary.
+
 ### CLI
 
 The headless exporter reuses `@inkling/core` and renders via headless Excalidraw (Playwright):
