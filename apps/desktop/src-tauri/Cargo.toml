@@ -27,6 +27,10 @@ base64 = "0.22"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 window-vibrancy = "0.5"
+# Used to read back the traffic lights' real position so we can center them
+# exactly, rather than hard-coding a magic inset.
+cocoa = "0.25"
+objc = "0.2"
 
 [target.'cfg(target_os = "windows")'.dependencies]
 window-vibrancy = "0.5"
