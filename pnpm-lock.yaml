@@ -68,12 +68,18 @@ importers:
       '@fontsource/bricolage-grotesque':
         specifier: ^5.1.0
         version: 5.2.10
+      '@fontsource/gveret-levin':
+        specifier: ^5.2.1
+        version: 5.2.1
       '@fontsource/ibm-plex-mono':
         specifier: ^5.1.0
         version: 5.2.7
       '@fontsource/ibm-plex-sans':
         specifier: ^5.1.0
         version: 5.2.8
+      '@fontsource/karantina':
+        specifier: ^5.2.7
+        version: 5.2.7
       '@inkling/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -697,11 +703,17 @@ packages:
   '@fontsource/bricolage-grotesque@5.2.10':
     resolution: {integrity: sha512-V2xS+1P7C8IrSypXLUx/bLtX/LsTlYtV2k2CsU+S/0t8qepZ2hvKSlyJIx7Ub/iY8Bbnj+IjAuUF9nvFz+BbIg==}
 
+  '@fontsource/gveret-levin@5.2.1':
+    resolution: {integrity: sha512-O1U7uGg81KhDWccfHy0mhzoaH7vQcpE0NIy9JQ7bYviynJGx56NRlomhumbvV/6oW5+ufo/U28uW0oMGgMuZZg==}
+
   '@fontsource/ibm-plex-mono@5.2.7':
     resolution: {integrity: sha512-MKAb8qV+CaiMQn2B0dIi1OV3565NYzp3WN5b4oT6LTkk+F0jR6j0ZN+5BKJiIhffDC3rtBULsYZE65+0018z9w==}
 
   '@fontsource/ibm-plex-sans@5.2.8':
     resolution: {integrity: sha512-eztSXjDhPhcpxNIiGTgMebdLP9qS4rWkysuE1V7c+DjOR0qiezaiDaTwQE7bTnG5HxAY/8M43XKDvs3cYq6ZYQ==}
+
+  '@fontsource/karantina@5.2.7':
+    resolution: {integrity: sha512-Dbwh59onDYnIDkZ4v6AtXnYocGI5RUzuc0dd7v6dyae80DRCeDl7Dd6dc60ec7kDDYDN0eVj09sXorSnzw+4oQ==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -3681,9 +3693,13 @@ snapshots:
 
   '@fontsource/bricolage-grotesque@5.2.10': {}
 
+  '@fontsource/gveret-levin@5.2.1': {}
+
   '@fontsource/ibm-plex-mono@5.2.7': {}
 
   '@fontsource/ibm-plex-sans@5.2.8': {}
+
+  '@fontsource/karantina@5.2.7': {}
 
   '@humanfs/core@0.19.2':
     dependencies:

@@ -47,8 +47,10 @@ export function measure(text: string, fontSize: number = SIZE.fontLabel): number
   for (const ch of text) {
     const c = ch.codePointAt(0) ?? 0;
     if (ch === ' ') units += 0.42;
-    else if (c >= 0x0590 && c <= 0x05ff) units += 0.75; // Hebrew (Amatic SC, condensed)
-    else if (c >= 0x0600 && c <= 0x08ff) units += 0.95; // Arabic & related (Aref Ruqaa, wide)
+    // Measured against the registered faces at 20px: Hebrew ~0.48em (Gveret
+    // Levin), Arabic ~0.39em (Aref Ruqaa). Kept a touch over for headroom.
+    else if (c >= 0x0590 && c <= 0x05ff) units += 0.62; // Hebrew
+    else if (c >= 0x0600 && c <= 0x08ff) units += 0.55; // Arabic & related
     else if (c >= 0x1100 && c <= 0xd7ff) units += 1.08; // CJK / Hangul
     else if (c >= 0xf900 && c <= 0xfaff) units += 1.08; // CJK compatibility
     else units += 0.68; // Latin & the rest (Excalifont is wide)

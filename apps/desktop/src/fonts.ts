@@ -9,10 +9,11 @@
  * the browser selects them for Hebrew/Arabic codepoints (last matching face wins).
  * Excalidraw redraws automatically once the faces finish loading.
  *
- * Amatic SC is a handwritten face covering Latin + Hebrew; Aref Ruqaa is a
- * calligraphic Arabic face. Latin keeps rendering in Excalifont.
+ * Gveret Levin is a marker-style Hebrew hand — a much heavier stroke than a
+ * condensed face like Amatic SC, so it sits closer to Excalifont's weight. Aref
+ * Ruqaa is a calligraphic Arabic face. Latin keeps rendering in Excalifont.
  */
-import amaticHebrew from '@fontsource/amatic-sc/files/amatic-sc-hebrew-700-normal.woff2';
+import hebrewHand from '@fontsource/gveret-levin/files/gveret-levin-hebrew-400-normal.woff2';
 import arefArabic from '@fontsource/aref-ruqaa/files/aref-ruqaa-arabic-400-normal.woff2';
 
 const HEBREW_RANGE = 'U+0590-05FF, U+FB1D-FB4F';
@@ -25,7 +26,7 @@ export async function registerScriptFonts(): Promise<void> {
   if (done || typeof FontFace === 'undefined') return;
   done = true;
   const defs: Array<[string, string]> = [
-    [amaticHebrew, HEBREW_RANGE],
+    [hebrewHand, HEBREW_RANGE],
     [arefArabic, ARABIC_RANGE],
   ];
   await Promise.all(
